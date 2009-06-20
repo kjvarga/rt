@@ -1,0 +1,9 @@
+*~
+.DS_Store
+log/*.log
+tmp/**/*
+tmp/restart.txt
+doc/api
+doc/app
+backups/**
+db/*.sqlite3

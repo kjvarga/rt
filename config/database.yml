@@ -15,8 +15,15 @@ test:
   pool: 5
   timeout: 5000
 
+#
+# Store the production database in the shared directory of the
+# capistrano deployment so that it doesn't get overridden during
+# updates.
+#
+# @see http://www.opensourceconnections.com/2007/03/01/using-sqlite3-capistrano-mongrel-cluster-oh-my/
+#
 production:
   adapter: sqlite3
-  database: db/production.sqlite3
+  database: ../../shared/db/production.sqlite3
   pool: 5
   timeout: 5000
