@@ -41,13 +41,13 @@ LIBRUBYARG_SHARED = -l$(RUBY_SO_NAME)
 LIBRUBYARG_STATIC = -l$(RUBY_SO_NAME)
 
 RUBY_EXTCONF_H = 
-CFLAGS   =  -fno-common -arch ppc -arch i386 -Os -pipe -fno-common 
+CFLAGS   =  -fno-common -arch i386 -Os -pipe -fno-common  -g -DXP_UNIX -O3 -Wall -Wcast-qual -Wwrite-strings -Wconversion -Wmissing-noreturn -Winline 
 INCFLAGS = -I. -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin9.0 -I.
 DEFS     = 
-CPPFLAGS = -DHAVE_SQLITE3_H -I/usr/local/include  
+CPPFLAGS = -DHAVE_XMLRELAXNGSETPARSERSTRUCTUREDERRORS -DHAVE_XMLRELAXNGSETVALIDSTRUCTUREDERRORS -DHAVE_XMLSCHEMASETVALIDSTRUCTUREDERRORS -DHAVE_XMLSCHEMASETPARSERSTRUCTUREDERRORS -I/opt/local/include/ -I/opt/local/include/libxml2 -I/opt/local/include  
 CXXFLAGS = $(CFLAGS) 
-DLDFLAGS = -L. -arch ppc -arch i386  
-LDSHARED = cc -arch ppc -arch i386 -pipe -bundle -undefined dynamic_lookup
+DLDFLAGS = -L. -arch i386  
+LDSHARED = cc -arch i386 -pipe -bundle -undefined dynamic_lookup
 AR = ar
 EXEEXT = 
 
@@ -69,8 +69,8 @@ COPY = cp
 
 preload = 
 
-libpath = . $(libdir) /usr/local/lib
-LIBPATH =  -L. -L$(libdir) -L/usr/local/lib
+libpath = . $(libdir) /opt/local/lib
+LIBPATH =  -L. -L$(libdir) -L/opt/local/lib
 DEFFILE = 
 
 CLEANFILES = mkmf.log
@@ -78,19 +78,19 @@ DISTCLEANFILES =
 
 extout = 
 extout_prefix = 
-target_prefix = 
+target_prefix = /nokogiri
 LOCAL_LIBS = 
-LIBS = $(LIBRUBYARG_SHARED) -lsqlite3  -lpthread -ldl -lm  
-SRCS = sqlite3_api_wrap.c
-OBJS = sqlite3_api_wrap.o
-TARGET = sqlite3_api
+LIBS = $(LIBRUBYARG_SHARED) -lexslt -lxslt -lxml2  -lpthread -ldl -lm  
+SRCS = html_document.c html_element_description.c html_entity_lookup.c html_sax_parser.c nokogiri.c xml_attr.c xml_cdata.c xml_comment.c xml_document.c xml_document_fragment.c xml_dtd.c xml_entity_reference.c xml_io.c xml_namespace.c xml_node.c xml_node_set.c xml_processing_instruction.c xml_reader.c xml_relax_ng.c xml_sax_parser.c xml_sax_push_parser.c xml_schema.c xml_syntax_error.c xml_text.c xml_xpath.c xml_xpath_context.c xslt_stylesheet.c
+OBJS = html_document.o html_element_description.o html_entity_lookup.o html_sax_parser.o nokogiri.o xml_attr.o xml_cdata.o xml_comment.o xml_document.o xml_document_fragment.o xml_dtd.o xml_entity_reference.o xml_io.o xml_namespace.o xml_node.o xml_node_set.o xml_processing_instruction.o xml_reader.o xml_relax_ng.o xml_sax_parser.o xml_sax_push_parser.o xml_schema.o xml_syntax_error.o xml_text.o xml_xpath.o xml_xpath_context.o xslt_stylesheet.o
+TARGET = nokogiri
 DLLIB = $(TARGET).bundle
 EXTSTATIC = 
 STATIC_LIB = 
 
 RUBYCOMMONDIR = $(sitedir)$(target_prefix)
-RUBYLIBDIR = /Users/karl/projects/rottentorrentz/vendor/gems/sqlite3-ruby-1.2.4/lib$(target_prefix)
-RUBYARCHDIR = /Users/karl/projects/rottentorrentz/vendor/gems/sqlite3-ruby-1.2.4/lib$(target_prefix)
+RUBYLIBDIR = /Users/karl/projects/rottentorrentz/vendor/gems/nokogiri-1.3.1/lib$(target_prefix)
+RUBYARCHDIR = /Users/karl/projects/rottentorrentz/vendor/gems/nokogiri-1.3.1/lib$(target_prefix)
 
 TARGET_SO     = $(DLLIB)
 CLEANLIBS     = $(TARGET).bundle $(TARGET).il? $(TARGET).tds $(TARGET).map

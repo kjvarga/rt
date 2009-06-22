@@ -4,6 +4,8 @@
 #
 # Adapted from http://blog.spoolz.com/2008/05/28/update-capistrano-deploy-for-shared-hosting-with-git-repository/
 #
+# @see http://www.opensourceconnections.com/2007/03/01/using-sqlite3-capistrano-mongrel-cluster-oh-my/ for Sqlite3 db setup.
+# @see http://github.com/collectiveidea/awesome-backup/tree/master for automated db backups
 
 #
 # Capistrano Dependencies.
@@ -11,11 +13,6 @@
 # Use capistrano_rsync_with_remote_cache for a special deployment strategy.
 #
 depend :local, :gem, "capistrano_rsync_with_remote_cache", ">=2.3.4"
-
-#
-# Custom Variables
-#
-set :application_symlink, "/home/#{user}/public_html/rottentorrentz.varzyfamily.com" # symlink the current release public folder to here
 
 #
 # SSH Setup
@@ -33,9 +30,15 @@ set :user,        "kjvarga" # login name for the shared host.  it should also be
 set :use_sudo,    false     # no access to sudo on a shared host
 
 #
+# Custom Variables
+#
+set :application_symlink, "/home/#{user}/public_html/rottentorrentz.varzyfamily.com" # symlink the current release public folder to here
+
+#
 # Deployment Setup
 #
 set :deploy_via,        :rsync_with_remote_cache
+set :rsync_options,     " -az -e 'ssh -p 2222 ' --delete " # non-standard SSH port.  the space after the port numnber is required!
 set :deploy_to,         "/home/#{user}/sites/#{application}"
 set :copy_exclude,      [".git", ".gitignore"]
 set :copy_compression,  :gzip   # compress using gzip when synchronizing the remote cache
@@ -91,7 +94,8 @@ namespace :deploy do
   end
 
   desc "Stop the web server.  Does nothing but override the default."
-  task :stop, :roles => :app {}
+  task :stop, :roles => :app do
+  end
 end
 
 #
