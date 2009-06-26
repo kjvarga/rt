@@ -1,3 +1,5 @@
+# @see http://reborg.tumblr.com/post/99668398/rails-gems-unpack-native
+
 rake 'gems:build', :sudo => true
 
 if File.exist?(".svn")

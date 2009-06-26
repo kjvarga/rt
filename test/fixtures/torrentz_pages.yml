@@ -1,0 +1,41 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+reload_from_cache:
+  url: http://torrentz.com/verifiedP?q=movie
+  html: loaded
+  updated_at: <%= (Time.now.utc - 6.minutes).to_s(:db) %>
+
+empty_html:
+  url: http://torrentz.com/verified?q=movie
+  html:
+
+remove_iframe:
+  url: http://torrentz.com/verifiedN?q=movie
+  html: >
+    <iframe width="728" scrolling="no" height="90" frameborder="0" marginwidth="0" marginheight="0" src="http://ad.103092804.com/st?ad_type=iframe&amp;ad_size=728x90&amp;section=402103"/>
+    <html><head> </head><body/></html>
+    </iframe>
+
+link_processing_src:
+  url: http://torrentz.com/verifiedA?q=movie
+  html: >
+    <script src="/test" type="text/javascript"></script>
+    <script src="test" type="text/javascript"></script>
+
+link_processing_src_result:
+  url: http://torrentz.com/verifiedB?q=movie
+  html: >
+    <script src="http://torrentz.com/test" type="text/javascript"></script>
+    <script src="http://torrentz.com/test" type="text/javascript"></script>
+
+link_processing_href:
+  url: http://torrentz.com/verifiedC?q=movie
+  html: >
+    <a href="/verifiedP?q=movie" style="margin: 0;"></a>
+    <a href="/profile" style="margin: 0;"></a>
+
+link_processing_href_result:
+  url: http://torrentz.com/verifiedD?q=movie
+  html: >
+    <a href="/verifiedP?q=movie" style="margin: 0;"></a>
+    <a href="http://torrentz.com/profile" style="margin: 0;"></a>

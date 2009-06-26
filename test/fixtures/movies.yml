@@ -1,0 +1,32 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+Watchmen:
+  tz_link: http://torrentz.com/e1586122e73dd9c0b1b3817a0fa716fb81480d06
+  rt_link: 
+  year: 
+  loaded: 
+  rt_img: 
+  rt_rating: 
+  rt_info: 
+  tz_hash: e1586122e73dd9c0b1b3817a0fa716fb81480d06
+  tz_title: Watchmen SCREENER XviD ROAR
+  loading_failed:
+    
+Ghost_Month:
+  tz_link: http://torrentz.com/bbf7e5a473907694659d7ff30056492b8bcc944d
+  rt_link: 
+  year: 
+  loaded: 
+  rt_img: 
+  rt_rating: 
+  rt_info: 
+  tz_hash: bbf7e5a473907694659d7ff30056492b8bcc944d
+  tz_title: Ghost Month 2009 DVDScr XVID TFE
+  loading_failed:
+    
+Invalid_Movie:
+  tz_title: Invalid Movie
+
+Movie_Not_Found:
+  tz_title: Invalid Movie
+  tz_hash: fasfsafsdfsdfasdf

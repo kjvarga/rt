@@ -6,7 +6,10 @@ tmp/restart.txt
 doc/api
 doc/app
 backups/**
-db/*.sqlite3vendor/gems/nokogiri-1.2.3/ext/nokogiri/Makefile
-vendor/gems/nokogiri-1.2.3/ext/nokogiri/conftest.dSYM/**/*
-vendor/gems/nokogiri-1.2.3/ext/nokogiri/*.o
-vendor/gems/nokogiri-1.2.3/lib/nokogiri/native.bundle
+db/*.sqlite3
+
+# Ignore local builds of unpacked gems
+vendor/gems/**/ext/**/Makefile
+vendor/gems/**/ext/**/conftest.dSYM/**/*
+vendor/gems/**/ext/**/*.o
+vendor/gems/**/lib/**/native.bundle
