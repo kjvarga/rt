@@ -1,7 +1,37 @@
+# == Schema Information
+# Schema version: 20090627051844
+#
+# Table name: movies
+#
+#  id         :integer         not null, primary key
+#  tz_link    :string(255)
+#  rt_link    :string(255)
+#  year       :integer
+#  rt_img     :string(255)
+#  rt_rating  :integer
+#  rt_info    :text
+#  rt_title   :string(255)
+#  tz_title   :string(255)
+#  tz_hash    :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#  status     :string(255)
+#
+
 require 'cgi'
 require 'nokogiri'
 
 class Movie < ActiveRecord::Base
+  
+  LOADING = 'loading'
+  LOADED = 'loaded'
+  FAILED = 'failed'
+  
+  validates_uniqueness_of :tz_hash
+  named_scope :new_movies, :conditions => { :status => nil }
+  named_scope :loading_movies, :conditions => { :status => Movie::LOADING }
+  named_scope :failed_movies, :conditions => { :status => Movie::FAILED }
+  named_scope :loaded_movies, :conditions => { :status => Movie::LOADED }
   
   # Store a mechanize agent as a class instance variable
   @agent = nil
@@ -20,6 +50,32 @@ class Movie < ActiveRecord::Base
         Regexp::IGNORECASE|Regexp::MULTILINE) 
   }
   
+  # Create movie instances for movies that don't yet exist in the db
+  # from an array of [link, hash, title] tuples.
+  def self.saveMoviesFromArray(movies)
+    transaction do
+      movies.each do |movie|
+        Movie.create(
+          :tz_link => movie[0].strip, 
+          :tz_hash => movie[1].strip,
+          :tz_title => movie[2].strip
+        ) # the save should fail if it already exists
+      end
+    end
+  end
+  
+  # Download movies that have not been loaded yet
+  def self.loadNewMovies
+    movies = Movie.new_movies.find(:all, :order => :created_at)
+    movies.each do |movie|
+      movie.lock!
+      break unless movie.status.nil?
+      movie.status = Movie::LOADING
+      movie.save
+      movie.lookupMovie
+    end
+  end
+  
   #
   # Lookup a movie on RT and save its info
   #
@@ -28,6 +84,11 @@ class Movie < ActiveRecord::Base
     # Validation
     if self.tz_title.nil?
       logger.warn "This movie doesn't have a title!"
+      return
+    end
+    
+    if self.status == Movie::LOADED
+      logger.warn "This movie has already been loaded!"
       return
     end
     
@@ -61,15 +122,20 @@ class Movie < ActiveRecord::Base
       
     rescue Exception
       logger.warn "Failed loading movie #{self.tz_title} (Id: #{self.id}, Hash: #{self.tz_hash})" 
-      self.loading_failed = true
+      self.status = Movie::FAILED
       
     else
-      self.loaded = true
+      self.status = Movie::LOADED
       
     ensure
       self.save
     end
 
     self
+  end
+  
+  # Use descriptive URLs
+  def to_param
+    "#{self.id}/#{self.rt_title.to_safe_uri}"
   end
 end

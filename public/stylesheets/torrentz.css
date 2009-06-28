@@ -1,0 +1,59 @@
+div.top > h1 > a {
+  margin-left: 10px !important; 
+  font-size: 30px !important;
+  width: auto !important;
+}
+
+div.top > h1 > a span {
+  font-size: 20px !important;
+  margin-left: 10px !important;
+}
+
+#refresh {
+  margin: 5px 0 0 10px;
+}
+
+div.results > dl > dd > span.a.rating {
+  width: 50px !important;
+}
+
+div.results > dl > dd {
+  width: 325px !important;
+}
+
+.movie-info {
+  text-align: left;
+  background-color: #f1f1f1;
+  padding: 20px;
+  border: 2px solid #999999;
+  width:600px;
+  z-index:100;
+  position: fixed;
+  left: 200px;
+  top: 150px;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.movie-info h1 {
+  margin-bottom: 15px;
+}
+
+.movie-info img {
+  float:left;
+  margin-bottom:20px;
+  margin-right:20px;
+}
+
+.movie-info .label {
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.movie-info div#movie_synopsis {
+  margin:5px 5px 10px;
+}
+
+.movie-info div#movie_castcrew {
+  margin:5px 5px 10px;
+}

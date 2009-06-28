@@ -1,3 +1,16 @@
+# == Schema Information
+# Schema version: 20090627051844
+#
+# Table name: torrentz_pages
+#
+#  id         :integer         not null, primary key
+#  html       :text
+#  params     :string(255)
+#  url        :string(255)     not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 reload_from_cache:
@@ -6,11 +19,15 @@ reload_from_cache:
   updated_at: <%= (Time.now.utc - 6.minutes).to_s(:db) %>
 
 empty_html:
-  url: http://torrentz.com/verified?q=movie
+  url: http://torrentz.com/verifiedQ?q=movie
   html:
 
-remove_iframe:
+order_by_name:
   url: http://torrentz.com/verifiedN?q=movie
+  html:
+        
+remove_iframe:
+  url: http://torrentz.com/verifiedR?q=movie
   html: >
     <iframe width="728" scrolling="no" height="90" frameborder="0" marginwidth="0" marginheight="0" src="http://ad.103092804.com/st?ad_type=iframe&amp;ad_size=728x90&amp;section=402103"/>
     <html><head> </head><body/></html>
@@ -21,10 +38,12 @@ link_processing_src:
   html: >
     <script src="/test" type="text/javascript"></script>
     <script src="test" type="text/javascript"></script>
+    <script src="http://torrentz.com/test" type="text/javascript"></script>
 
 link_processing_src_result:
   url: http://torrentz.com/verifiedB?q=movie
   html: >
+    <script src="http://torrentz.com/test" type="text/javascript"></script>
     <script src="http://torrentz.com/test" type="text/javascript"></script>
     <script src="http://torrentz.com/test" type="text/javascript"></script>
 
@@ -33,9 +52,29 @@ link_processing_href:
   html: >
     <a href="/verifiedP?q=movie" style="margin: 0;"></a>
     <a href="/profile" style="margin: 0;"></a>
+    <a href="http://torrentz.com/profile" style="margin: 0;"></a>
 
 link_processing_href_result:
   url: http://torrentz.com/verifiedD?q=movie
   html: >
     <a href="/verifiedP?q=movie" style="margin: 0;"></a>
     <a href="http://torrentz.com/profile" style="margin: 0;"></a>
+    <a href="http://torrentz.com/profile" style="margin: 0;"></a>
+
+process_head:
+  url: http://torrentz.com/verifiedE?q=movie
+  html: >
+    <html>
+    <head class="bold">
+    <script src="http://torrentz.com/test" type="text/javascript"></script>
+    </head>
+    </html>
+
+process_head_result:
+  url: http://torrentz.com/verifiedF?q=movie
+  html: >
+    <html>
+    <head class="bold">
+    <script src="http://torrentz.com/test" type="text/javascript"></script>
+    <%= TorrentzPage::HEAD_INCLUDE %></head>
+    </html>

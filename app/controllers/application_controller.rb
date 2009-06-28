@@ -1,6 +1,9 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
+require 'app'
+require 'lib/string'
+
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -18,10 +21,17 @@ class ApplicationController < ActionController::Base
   
   def torrentz
     if params[:q].nil? or params[:searchOrVerified].nil?
-      render :text => TorrentzPage.get().html
+      tzpage = TorrentzPage.findOrCreate()
     else
       url = "#{TorrentzPage::SITE_URL}#{params[:searchOrVerified]}?q=#{params[:q]}"
-      render :text => TorrentzPage.get(url).html
+      tzpage = TorrentzPage.findOrCreate(url)
     end
+    
+    if tzpage.updated_at <= 5.minutes.ago
+      App::call_rake('tz:update_page', :id => tzpage.id)
+    elsif !tzpage.movies.nil?
+      App::call_rake('tz:load_movies', :id => tzpage.id)
+    end
+    render :text => tzpage.html
   end
 end

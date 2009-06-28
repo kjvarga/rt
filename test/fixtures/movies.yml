@@ -1,28 +1,34 @@
+# == Schema Information
+# Schema version: 20090627051844
+#
+# Table name: movies
+#
+#  id         :integer         not null, primary key
+#  tz_link    :string(255)
+#  rt_link    :string(255)
+#  year       :integer
+#  rt_img     :string(255)
+#  rt_rating  :integer
+#  rt_info    :text
+#  rt_title   :string(255)
+#  tz_title   :string(255)
+#  tz_hash    :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#  status     :string(255)
+#
+
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 Watchmen:
   tz_link: http://torrentz.com/e1586122e73dd9c0b1b3817a0fa716fb81480d06
-  rt_link: 
-  year: 
-  loaded: 
-  rt_img: 
-  rt_rating: 
-  rt_info: 
   tz_hash: e1586122e73dd9c0b1b3817a0fa716fb81480d06
   tz_title: Watchmen SCREENER XviD ROAR
-  loading_failed:
     
 Ghost_Month:
   tz_link: http://torrentz.com/bbf7e5a473907694659d7ff30056492b8bcc944d
-  rt_link: 
-  year: 
-  loaded: 
-  rt_img: 
-  rt_rating: 
-  rt_info: 
   tz_hash: bbf7e5a473907694659d7ff30056492b8bcc944d
   tz_title: Ghost Month 2009 DVDScr XVID TFE
-  loading_failed:
     
 Invalid_Movie:
   tz_title: Invalid Movie
