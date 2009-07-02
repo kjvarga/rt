@@ -42,6 +42,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':searchOrVerified', 
       :controller => 'application', :action => 'torrentz',
       :searchOrVerified => /(search[A-Z]?)|(verified[A-Z]?)/
+  map.connect '/:controller/:action/:id/:title'
   
   map.root :controller => 'application'
   map.connect ':controller/:action/:id'

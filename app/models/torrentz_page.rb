@@ -28,18 +28,20 @@ class TorrentzPage < ActiveRecord::Base
   end
   
   SITE_URL = 'http://torrentz.com/'
-  VERIFIED_URL = 'http://torrentz.com/verified?q=movie'
+  VERIFIED_URL = 'http://torrentz.com/verified?q=movie&p=0'
   SITE_URL_REGEX = /^http:\/\/torrentz.com\//mi
   SRC_REGEX = /(<[^>]*?src=["\'])([^\'"]*?)(["\'][^>]*?>)/mi
   HREF_REGEX = /(<[^>]*?href=["\'])([^\'"]*?)(["\'][^>]*?>)/mi
+  STYLE_URL_REGEX = /(style=["\'].*\surl\(["\'])([^\'"]*?)(["\']\))/mi
   TORRENT_MOVIE_REGEX = /<[^>]*?href=["\'](http:\/\/torrentz.com\/([a-z0-9]{40}?))["\'][^>]*?>(.*?)<\/a>/i
   IFRAME_REGEX = /<iframe[^>]*?>.*?<\/iframe>/mi
   HEAD_REGEX = /(<head[^>]*>)(.*?)(<\/head>)/mi
   PASS_THROUGH_LINKS = /q=movie/
-  HEAD_INCLUDE = <<INCLUDE
-    <link type="text/css" href="/stylesheets/torrentz.css" rel="stylesheet" />
+  HEAD_INCLUDE = <<-INCLUDE.strip
+    <link type="text/css" href="/stylesheets/torrentz.css" rel="stylesheet" />\
+    <script type="text/javascript" src="/javascripts/jquery-1.3.2.min.js"></script>\
     <script type="text/javascript" src="/javascripts/torrentz.js"></script>
-INCLUDE
+    INCLUDE
   
   # Return a TorrentzPage instance for these search parameters
   def self.findOrCreate(url=nil)
@@ -55,6 +57,7 @@ INCLUDE
     
     if tzpage.html.nil?
       tzpage.downloadUrl
+      tzpage.extractMovies
       tzpage.save
     end
     tzpage
@@ -82,6 +85,17 @@ INCLUDE
     
     # Prepend all SRC links with the torrentz URL
     html.gsub!(SRC_REGEX) do |m|
+      src = $2[0].chr == '/' ? $2[1..-1] : $2
+      prepended = "#{$1}#{TorrentzPage::SITE_URL}#{src}#{$3}"
+      if $2.match(SITE_URL_REGEX)
+        m
+      else
+        prepended
+      end
+    end
+    
+    # Prepend all CSS urls with the torrentz URL
+    html.gsub!(STYLE_URL_REGEX) do |m|
       src = $2[0].chr == '/' ? $2[1..-1] : $2
       prepended = "#{$1}#{TorrentzPage::SITE_URL}#{src}#{$3}"
       if $2.match(SITE_URL_REGEX)

@@ -23,7 +23,8 @@ class ApplicationController < ActionController::Base
     if params[:q].nil? or params[:searchOrVerified].nil?
       tzpage = TorrentzPage.findOrCreate()
     else
-      url = "#{TorrentzPage::SITE_URL}#{params[:searchOrVerified]}?q=#{params[:q]}"
+      p = params[:p] || 0
+      url = "#{TorrentzPage::SITE_URL}#{params[:searchOrVerified]}?q=#{params[:q]}&p=#{p}"
       tzpage = TorrentzPage.findOrCreate(url)
     end
     

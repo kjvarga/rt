@@ -5,7 +5,6 @@ require 'nokogiri'
 
 class MovieTest < ActiveSupport::TestCase
 
-  
   test "loading movie information" do
 
     movies = Movie.find(:all)
@@ -17,6 +16,7 @@ class MovieTest < ActiveSupport::TestCase
       assert_not_nil movie.rt_info
       assert_not_nil movie.rt_img
       assert_not_nil movie.rt_link
+      assert_no_match Movie::EXTRACT_SCRIPT_REGEX, movie.rt_info
     end
   end
 end

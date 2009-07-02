@@ -17,7 +17,7 @@ class MoviesController < ApplicationController
   end
   
   def show
-    @movie = Movie.find_first_by_tz_hash(params[:tz_hash])
+    @movie = Movie.find_by_id(params[:id])
     render @movie
   end
 end

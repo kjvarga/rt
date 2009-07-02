@@ -1,11 +1,11 @@
-<frameset rows="40,*" border="0" framespacing="0" frameborder="0">
+<frameset rows="60,*" border="0" framespacing="0" frameborder="0">
   <frame class="header-frame" 
       src="<%= url_for :controller => 'application', :action => 'header' %>"
-      name="header_frame" scrolling="no" frameborder="1"
+      name="header_frame" scrolling="no"
       noresize marginwidth="0" marginheight="0">
   </frame>
-  <frame src="<%= url_for :controller => 'application', :action => 'torrentz' %>" name="torrentz"
-      scrolling="auto" frameborder="0"
+  <frame src="<%= url_for :controller => 'application', :action => 'torrentz' %>" 
+      name="torrentz" scrolling="auto"
       noresize marginwidth="0" marginheight="0">
   </frame>
 </frameset>

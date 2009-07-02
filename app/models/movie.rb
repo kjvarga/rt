@@ -44,9 +44,10 @@ class Movie < ActiveRecord::Base
   
   ROTTEN_TOMATOES_SEARCH_URL = 'http://rottentomatoes.com/search/full_search.php?search='
   ROTTEN_TOMATOES_URL = 'http://www.rottentomatoes.com'
-  EXTRACT_BODY_REGEX = Regexp.new('<body[^>]*>(.*?)</body>', Regexp::IGNORECASE|Regexp::MULTILINE)
+  EXTRACT_BODY_REGEX = /<body[^>]*>(.*?)<\/body>/mi
+  EXTRACT_SCRIPT_REGEX = /(<script[^>]*>.*?<\/script>)/mi
   EXTRACT_MOVIE_INFO_REGEX = lambda { |inner_divs| 
-    Regexp.new('(<div id="movie_info_box"[^>]*>(.*</div>){'+inner_divs.to_s+'}</div>)', 
+    Regexp.new('(<div id="movie_info_box"[^>]*>(.*?</div>){'+inner_divs.to_s+'})', 
         Regexp::IGNORECASE|Regexp::MULTILINE) 
   }
   
@@ -118,7 +119,9 @@ class Movie < ActiveRecord::Base
       #self.rt_info = Movie::EXTRACT_MOVIE_INFO_BOX.match(body)[0] #doc.css('#movie_info_box')[0].to_s unless doc.css('#movie_info_box')[0].nil?
       inner_divs = doc.css('#movie_info_box div').length
       logger.info "MOVIE_INFO_BOX has #{inner_divs} divs"
-      self.rt_info = EXTRACT_MOVIE_INFO_REGEX.call(inner_divs).match(body)[0]
+      rt_info = Movie::EXTRACT_MOVIE_INFO_REGEX.call(inner_divs).match(body)[0]
+      rt_info.gsub!(Movie::EXTRACT_SCRIPT_REGEX, '')
+      self.rt_info = rt_info
       
     rescue Exception
       logger.warn "Failed loading movie #{self.tz_title} (Id: #{self.id}, Hash: #{self.tz_hash})" 

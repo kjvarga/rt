@@ -36,6 +36,7 @@ remove_iframe:
 link_processing_src:
   url: http://torrentz.com/verifiedA?q=movie
   html: >
+    <dt style="background: transparent url('/img/accept.png') no-repeat right center" title="Verified Source">
     <script src="/test" type="text/javascript"></script>
     <script src="test" type="text/javascript"></script>
     <script src="http://torrentz.com/test" type="text/javascript"></script>
@@ -43,6 +44,7 @@ link_processing_src:
 link_processing_src_result:
   url: http://torrentz.com/verifiedB?q=movie
   html: >
+    <dt style="background: transparent url('http://torrentz.com/img/accept.png') no-repeat right center" title="Verified Source">
     <script src="http://torrentz.com/test" type="text/javascript"></script>
     <script src="http://torrentz.com/test" type="text/javascript"></script>
     <script src="http://torrentz.com/test" type="text/javascript"></script>
