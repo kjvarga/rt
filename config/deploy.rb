@@ -60,18 +60,57 @@ role :db,  "varzyfamily.com", :primary => true  # primary database
 #
 # Tasks
 #
-after "deploy:update_code", :update_permissions_on_public
 after "deploy:cold",        :create_application_symlink
-
-desc "chmod 755 the public/ folder and the public/dispatch.* files."
-task :update_permissions_on_public, :roles => [:app] do
-  run "chmod 755 #{release_path}/public"
-  run "chmod 755 #{release_path}/public/dispatch.*"
-end
+after "deploy:setup",       :create_application_symlink
 
 desc "Symlink the current release's public/ folder to a directory in public_html."
 task :create_application_symlink, :roles => [:app] do
   run "ln -fs #{current_path}/public #{application_symlink}"
+end
+
+desc "After setup ensure the shared/db folder exists."
+task :after_setup, :roles => [:app, :db, :web] do
+  run "umask 02 && mkdir -p #{shared_path}/db"
+end
+
+desc <<-DESC
+  Parse the enviroment files and for those gems that we want to use the
+  system gem, delete the local gem from vendor/gems.  To mark a local gem for
+  deletion, add a :use_system_gem => true option to your config.gem statement
+  in either environment.rb or production.rb.  You may need to do this when you
+  have an unpacked gem but no access to a compiler, so you cannot build it.
+  To force Rails to use the system/local gem you have to remove the unpacked gem.
+DESC
+task :delete_local_copy_of_system_gems do
+  ["#{release_path}/config/environment.rb", "#{release_path}/config/environments/production.rb"].each do |file|
+    cmd = <<-CMD
+      grep 'config.gem.*:use_system_gem => true' #{file} |\
+      sed 's/[ ^I]*config.gem[ ^I]*['\\''"]\\([^'\\''"]*\\)['\\''\"].*/\\1/'
+    CMD
+    gems = []
+    run cmd do |channel, stream, data|
+      gems = data.split()
+    end
+    gems.each do |gem|
+      delete "#{release_path}/vendor/gems/#{gem}*", :recursive => true
+    end
+  end
+end
+
+desc "After updating the code, do some housekeeping."
+task :after_update_code, :roles => [:app, :db, :web] do
+  
+  # chmod 755 the public/ folder and the public/dispatch.* files.
+  run "chmod 755 #{release_path}/public"
+  run "chmod 755 #{release_path}/public/dispatch.*"
+  
+  # Switch to production environment.
+  # This uncomments all lines in environment.rb that start with '#prod'
+  run "sed 's/^#prod//g' < #{release_path}/config/environment.rb > #{release_path}/config/environment.rb"
+  
+  # Delete unpacked native gems.  Because we don't have access to the C compiler
+  # on HostGator, we cannot build the unpacked gems.  So we must use the system gem.
+  delete_local_copy_of_system_gems
 end
 
 #
@@ -97,7 +136,7 @@ namespace :deploy do
   task :stop, :roles => :app do
   end
 end
-
+  
 #
 # Log
 #
@@ -120,7 +159,7 @@ namespace :log do
 
       `mkdir -p #{File.dirname(__FILE__)}/../backups/log`
       download "#{logfile}.bz2", "backups/log/#{filename}"
-      delete_files "#{logfile}.bz2"
+      delete "#{logfile}.bz2"
     end
   end
 end
@@ -130,8 +169,4 @@ end
 #
 def timestamp_string
   Time.now.strftime("%Y%m%d%H%M%S")
-end
-
-def delete_files(*args)
-  run "rm -f #{args.join(' ')}"
 end

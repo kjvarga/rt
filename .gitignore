@@ -1,5 +1,6 @@
 *~
 .DS_Store
+.rsync_cache
 log/*.log
 tmp/**/*
 tmp/restart.txt

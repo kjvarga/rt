@@ -3,6 +3,9 @@
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
 
+# Lines beginning with '#prod' will be uncommented in production by capistrano
+#prod ENV['RAILS_ENV'] ||= 'production'
+
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
@@ -15,10 +18,9 @@ Rails::Initializer.run do |config|
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
 
   # Specify gems that this application depends on and have them installed with rake gems:install
-  # config.gem "bj"
-  # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
+  # KJV: gems with :use_system_gem => true will be deleted from vendor/gems by capistrano
   config.gem "sqlite3-ruby", :lib => "sqlite3"
-  config.gem "nokogiri", :version => ">=1.3.1"
+  config.gem "nokogiri", :version => ">=1.3.1", :use_system_gem => true
   config.gem "mechanize", :version => ">=0.9.3"
   config.gem "redgreen", :version => ">=1.2.2"
   
