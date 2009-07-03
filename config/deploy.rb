@@ -92,7 +92,7 @@ task :delete_local_copy_of_system_gems do
       gems = data.split()
     end
     gems.each do |gem|
-      delete "#{release_path}/vendor/gems/#{gem}*", :recursive => true
+      run "rm -rf #{release_path}/vendor/gems/#{gem}*"
     end
   end
 end
@@ -160,7 +160,7 @@ namespace :log do
 
       `mkdir -p #{File.dirname(__FILE__)}/../backups/log`
       download "#{logfile}.bz2", "backups/log/#{filename}"
-      delete "#{logfile}.bz2"
+      run "rm -f #{logfile}.bz2"
     end
   end
 end
