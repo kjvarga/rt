@@ -106,7 +106,8 @@ task :after_update_code, :roles => [:app, :db, :web] do
   
   # Switch to production environment.
   # This uncomments all lines in environment.rb that start with '#prod'
-  run "sed 's/^#prod//g' < #{release_path}/config/environment.rb > #{release_path}/config/environment.rb"
+  environment_file = "#{release_path}/config/environment.rb"
+  run "sed 's/^#prod//g' #{environment_file} > #{environment_file}.tmp && mv #{environment_file}.tmp #{environment_file}"
   
   # Delete unpacked native gems.  Because we don't have access to the C compiler
   # on HostGator, we cannot build the unpacked gems.  So we must use the system gem.
