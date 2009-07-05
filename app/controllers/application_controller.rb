@@ -2,7 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 require 'app'
-require 'lib/string'
+require 'extensions'
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
@@ -27,6 +27,7 @@ class ApplicationController < ActionController::Base
       url = "#{TorrentzPage::SITE_URL}#{params[:searchOrVerified]}?q=#{params[:q]}&p=#{p}"
       tzpage = TorrentzPage.findOrCreate(url)
     end
+    session[:torrentz_page_id] = tzpage.id
     
     if tzpage.updated_at <= 5.minutes.ago
       App::call_rake('tz:update_page', :id => tzpage.id)

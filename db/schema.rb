@@ -9,14 +9,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090627051844) do
+ActiveRecord::Schema.define(:version => 20090705150709) do
 
   create_table "movies", :force => true do |t|
     t.string   "tz_link"
     t.string   "rt_link"
     t.integer  "year"
     t.string   "rt_img"
-    t.integer  "rt_rating"
+    t.integer  "rt_rating",  :default => 0
     t.text     "rt_info"
     t.string   "rt_title"
     t.string   "tz_title"

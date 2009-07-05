@@ -22,12 +22,20 @@ div.results > dl > dd {
   width: 325px !important;
 }
 
+.rating_link {
+  text-decoration: underline;  
+}
+
 .rating-fresh {
   color: #df2822;
 }
 
 .rating-rotten {
   color: #627d11;
+}
+
+.not-available {
+  color: #999999;
 }
 
 .movie-info-container {
@@ -91,6 +99,7 @@ div.results > dl > dd {
 .movie-info .left-pane .movie-links, .movie-info .left-pane .movie-links a {
   color: #ff6633; 
   text-align: right;
+  text-decoration: underline;
 }
 
 .movie-info img.movie-image {
@@ -102,6 +111,7 @@ div.results > dl > dd {
 }
 
 .movie-info .label {
+  color: #FF9F7E; /* 50% sat of the #ff6633 */
   font-weight: bold;
   margin-right: 2px;
 }

@@ -1,10 +1,12 @@
 <% content_for :head, javascript_include_tag('header') + stylesheet_link_tag('header') %>
 <div class="content">
   <div class="help">
-    <span class="title">RottenTorrentz</span> adds movie ratings from 
-    <a href="http://rottentomatoes.com">RottenTomatoes.com</a> to 
-    <a href="http://torrentz.com">Torrentz.com</a>
-    movie listings.  Hover over the ratings to see movie info.
+    <a class="title" href="http://rottentorrentz.com">RottenTorrentz</a> 
+    adds movie ratings from 
+    <a href="http://rottentomatoes.com" target="_blank">RottenTomatoes.com</a> to 
+    <a href="http://torrentz.com" target="_blank">Torrentz.com</a>
+    movie listings.  
+    <span class="highlight">Hover over the ratings to see movie info.</span>
   </div>
   <div class="title">
     <%= link_to('RottenTorrentz', root_path) %>

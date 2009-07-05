@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090627051844
+# Schema version: 20090705150709
 #
 # Table name: torrentz_pages
 #
@@ -36,6 +36,7 @@ class TorrentzPage < ActiveRecord::Base
   TORRENT_MOVIE_REGEX = /<[^>]*?href=["\'](http:\/\/torrentz.com\/([a-z0-9]{40}?))["\'][^>]*?>(.*?)<\/a>/i
   IFRAME_REGEX = /<iframe[^>]*?>.*?<\/iframe>/mi
   HEAD_REGEX = /(<head[^>]*>)(.*?)(<\/head>)/mi
+  REMOVE_HEADER_REGEX = /(<body[^>]*>).*?(<div[^>]+class="results"[^>]+>)/mi
   PASS_THROUGH_LINKS = /q=movie/
   HEAD_INCLUDE = <<-INCLUDE.strip
     <link type="text/css" href="/stylesheets/torrentz.css" rel="stylesheet" />\
@@ -124,6 +125,9 @@ class TorrentzPage < ActiveRecord::Base
     html.sub!(HEAD_REGEX) do |m|
       "#{$1}#{$2}#{TorrentzPage::HEAD_INCLUDE}#{$3}"
     end
+    
+    # Remove everything before the results div
+    html.sub!(REMOVE_HEADER_REGEX, '\1\2')
     
     self.html = html if htmlarg.nil?
     html 

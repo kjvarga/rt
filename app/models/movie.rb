@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090627051844
+# Schema version: 20090705150709
 #
 # Table name: movies
 #
@@ -32,6 +32,7 @@ class Movie < ActiveRecord::Base
   named_scope :loading_movies, :conditions => { :status => Movie::LOADING }
   named_scope :failed_movies, :conditions => { :status => Movie::FAILED }
   named_scope :loaded_movies, :conditions => { :status => Movie::LOADED }
+  named_scope :loaded_or_failed_movies, :conditions => { :status => [Movie::LOADED, Movie::FAILED] }
   
   # Store a mechanize agent as a class instance variable
   @agent = nil
@@ -52,16 +53,29 @@ class Movie < ActiveRecord::Base
   }
   
   # Create movie instances for movies that don't yet exist in the db
-  # from an array of [link, hash, title] tuples.
+  # from an array of [link, hash, title] tuples, and then load them.
+  # Also reloads failed movies.
   def self.saveMoviesFromArray(movies)
+    movie_objs = []
     transaction do
       movies.each do |movie|
-        Movie.create(
+        hash = movie[1].strip
+        m = Movie.create(
           :tz_link => movie[0].strip, 
-          :tz_hash => movie[1].strip,
+          :tz_hash => hash,
           :tz_title => movie[2].strip
         ) # the save should fail if it already exists
+        m ||= Movie.find_by_tz_hash(hash)
+        movie_objs.push(m)
       end
+    end
+    
+    movie_objs.each do |movie|
+      movie.lock!
+      break unless movie.status.nil? || movie.status == Movie::FAILED
+      movie.status = Movie::LOADING
+      movie.save
+      movie.lookupMovie
     end
   end
   
@@ -139,6 +153,7 @@ class Movie < ActiveRecord::Base
   
   # Use descriptive URLs
   def to_param
-    "#{self.id}/#{self.rt_title.to_safe_uri}"
+    title = self.rt_title || 'loading-failed'
+    "#{self.id}/#{title.to_safe_uri}"
   end
 end

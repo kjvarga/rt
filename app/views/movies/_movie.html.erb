@@ -1,6 +1,14 @@
-<div class="movie-info"> 
-  <div class="rating <%= @movie.rt_rating > 50 ? 'rating-fresh' : 'rating-rotten' %>">
-    <%= h(@movie.rt_rating) %>%
+<%
+  rating_class = 'not-available'
+  rating_text = 'N/A'
+  if !@movie.rt_rating.nil? && @movie.rt_rating > 0
+    rating_class = @movie.rt_rating > 50 ? 'rating-fresh' : 'rating-rotten' 
+    rating_text = @movie.rt_rating.to_s + '%'
+  end
+%>
+  <div class="movie-info"> 
+  <div class="rating <%= rating_class %>">
+    <%= h(rating_text) %>
   </div>
   <h1><%= h(@movie.rt_title) %></h1>
   

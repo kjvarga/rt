@@ -26,6 +26,5 @@ namespace :tz do
   def extractAndLoadMovies(tzpage)
     tzpage.extractMovies
     Movie.saveMoviesFromArray(tzpage.movies)
-    Movie.loadNewMovies
   end  
 end

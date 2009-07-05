@@ -26,14 +26,10 @@ div.title {
   left: -8px;
 }
 
-div.title a {
+.content .title a {
   font-size: 30px;
   color: #ff6633;
   text-decoration: none;
-}
-
-span.title {
-  color: #ff6633;
 }
 
 .help {
@@ -55,4 +51,12 @@ span.title {
 
 .help a {
   color:#CCCCCC;
+}
+
+.help a.title {
+  color: #ff6633;
+}
+
+.help .highlight {
+  color: #ffffff;
 }
