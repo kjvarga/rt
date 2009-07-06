@@ -36,7 +36,7 @@ class TorrentzPage < ActiveRecord::Base
   TORRENT_MOVIE_REGEX = /<[^>]*?href=["\'](http:\/\/torrentz.com\/([a-z0-9]{40}?))["\'][^>]*?>(.*?)<\/a>/i
   IFRAME_REGEX = /<iframe[^>]*?>.*?<\/iframe>/mi
   HEAD_REGEX = /(<head[^>]*>)(.*?)(<\/head>)/mi
-  REMOVE_HEADER_REGEX = /(<body[^>]*>).*?(<div[^>]+class="results"[^>]+>)/mi
+  REMOVE_HEADER_REGEX = /(<body[^>]*>).*?(<div[^>]+class="results"[^>]*>)/mi
   PASS_THROUGH_LINKS = /q=movie/
   HEAD_INCLUDE = <<-INCLUDE.strip
     <link type="text/css" href="/stylesheets/torrentz.css" rel="stylesheet" />\
@@ -62,6 +62,10 @@ class TorrentzPage < ActiveRecord::Base
       tzpage.save
     end
     tzpage
+  end
+  
+  def localUrl(local_url)
+    self.url.sub(SITE_URL, local_url)
   end
   
   # Load the torrentz page and store it in this instance

@@ -34,23 +34,25 @@ div.title {
 
 .help {
   background-color: #444444;
-  bottom: 0;
   color: #CCCCCC;
   font-size: 10px;
   overflow: hidden;
   padding: 5px;
   position:absolute;
+  /*right: 8px;
+  bottom: 0;*/
+  top: 0px;
   right: 8px;
-  width: 355px;
-  height: 30px;
-  text-align: justify;
-  border-top: 1px solid #555;
+  width: 450px;
+  /*height: 30px;*/
+  text-align: left;
+  border-bottom: 1px solid #555;
   border-right: 1px solid #555;
   border-left: 1px solid #555;
 }
 
 .help a {
-  color:#CCCCCC;
+  color: #ff6633; /*color:#CCCCCC;*/
 }
 
 .help a.title {

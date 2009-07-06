@@ -20,14 +20,13 @@ class TorrentzPageTest < ActiveSupport::TestCase
     assert_equal second.updated_at.to_i, first.updated_at.to_i
   end
   
+  # This functionality has been moved into the application controller
   test "Update old cached versions of the torrentz webpages" do
     logger.debug @reload_from_cache.inspect
 
     tz = @reload_from_cache
     six_mins = tz.updated_at
     five_mins = (Time.zone.now - 5.minutes)
-    logger.debug six_mins.inspect
-    logger.debug five_mins.inspect
     assert_operator six_mins, :<, five_mins
     assert_equal 'loaded', tz.html
     first = TorrentzPage.findOrCreate(tz.url)
@@ -51,9 +50,9 @@ class TorrentzPageTest < ActiveSupport::TestCase
     assert_not_nil @remove_iframe.html
     assert_equal '', html.strip, "IFRAMES should be removed"
     
-    # Add our javascript include to the head
-    html = @process_head.processPage(@process_head.html.strip)
-    assert_equal @process_head_result.html, html.strip, "Append our JavaScript include to the contents of HEAD"
+    # Add our javascript include to the head and delete everything before the results div.
+    html = @process_head_and_body.processPage(@process_head_and_body.html.strip)
+    assert_equal @process_head_and_body_result.html, html.strip, "Append our JavaScript include to the contents of HEAD and delete everything before the results div."
   end
   
   test "Extract movies from the html" do
@@ -62,16 +61,32 @@ class TorrentzPageTest < ActiveSupport::TestCase
     movies = tz.extractMovies
     assert_equal 51, movies.length
     
-    # Test saving the movies, it should not overwrite the existing ones
+    # Test saving some of the movies, it should not overwrite the existing ones
     Movie.delete_all
     assert_equal 0, Movie.count, "There should be no movie records"
+
+    # Work with a subset
+    movies = movies.slice(1,2)
     Movie.saveMoviesFromArray(movies)
     assert_equal movies.length, Movie.count, "Now we have a bunch of movies"
-    first = Movie.find :first
-    first.rt_rating = 99
-    assert first.save
+    
+    # Test that loaded movies are not altered and that failed movies are reloaded
+    test = Movie.find :first, :conditions => { :status => Movie::LOADED }
+    assert_not_nil test, "the movie should have loaded successfully!"
+    test.rt_rating = 99
+    assert_equal Movie::LOADED, test.status, "movie should be loaded"
+    assert test.save
+    
     Movie.saveMoviesFromArray(movies)
-    first = Movie.find :first
-    assert_equal 99, first.rt_rating
+    test.reload
+    assert_equal 99, test.rt_rating, "movie should not have been reloaded"
+    
+    assert_equal Movie::LOADED, test.status, "movie should be loaded"
+    test.status = Movie::FAILED
+    assert test.save
+    assert_equal Movie::FAILED, test.status, "movie should now be failed"
+    Movie.saveMoviesFromArray(movies)
+    test.reload
+    assert_equal Movie::LOADED, test.status, "movie should have been reloaded"
   end
 end

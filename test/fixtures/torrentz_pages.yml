@@ -63,7 +63,7 @@ link_processing_href_result:
     <a href="http://torrentz.com/profile" style="margin: 0;"></a>
     <a href="http://torrentz.com/profile" style="margin: 0;"></a>
 
-process_head:
+process_head_and_body:
   url: http://torrentz.com/verifiedE?q=movie
   html: >
     <html>
@@ -71,8 +71,18 @@ process_head:
     <script src="http://torrentz.com/test" type="text/javascript"></script>
     </head>
     </html>
+    <body class="nonce">
+    <script type="text/javascript">
+      // Blah blah
+    </script>
+    <div class="this_should_be_removed"><div></div></div>
+    <span>xxx</span>
+    <div class="results" style="display: none;">
+      content here
+    </div>
+    </body>
 
-process_head_result:
+process_head_and_body_result:
   url: http://torrentz.com/verifiedF?q=movie
   html: >
     <html>
@@ -80,3 +90,7 @@ process_head_result:
     <script src="http://torrentz.com/test" type="text/javascript"></script>
     <%= TorrentzPage::HEAD_INCLUDE %></head>
     </html>
+    <body class="nonce"><div class="results" style="display: none;">
+      content here
+    </div>
+    </body>

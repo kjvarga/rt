@@ -60,19 +60,22 @@ class Movie < ActiveRecord::Base
     transaction do
       movies.each do |movie|
         hash = movie[1].strip
-        m = Movie.create(
-          :tz_link => movie[0].strip, 
+        m = Movie.find_or_create_by_tz_hash(
           :tz_hash => hash,
+          :tz_link => movie[0].strip, 
           :tz_title => movie[2].strip
         ) # the save should fail if it already exists
-        m ||= Movie.find_by_tz_hash(hash)
+        #m ||= Movie.find_by_tz_hash(hash)
         movie_objs.push(m)
       end
     end
-    
+    logger.debug 'INSPECTING THE MOVIE OBJECT ARRAY'
+    logger.debug movie_objs.inspect
     movie_objs.each do |movie|
       movie.lock!
+      logger.debug "MOVIE #{movie.id} STATUS IS #{movie.status}"
       break unless movie.status.nil? || movie.status == Movie::FAILED
+      logger.debug "LOADING MOVIE #{movie.id}"
       movie.status = Movie::LOADING
       movie.save
       movie.lookupMovie
@@ -132,7 +135,6 @@ class Movie < ActiveRecord::Base
       # so we have to use these convoluted regular expressions to get the content.
       #self.rt_info = Movie::EXTRACT_MOVIE_INFO_BOX.match(body)[0] #doc.css('#movie_info_box')[0].to_s unless doc.css('#movie_info_box')[0].nil?
       inner_divs = doc.css('#movie_info_box div').length
-      logger.info "MOVIE_INFO_BOX has #{inner_divs} divs"
       rt_info = Movie::EXTRACT_MOVIE_INFO_REGEX.call(inner_divs).match(body)[0]
       rt_info.gsub!(Movie::EXTRACT_SCRIPT_REGEX, '')
       self.rt_info = rt_info

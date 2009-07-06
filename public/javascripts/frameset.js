@@ -1,4 +1,8 @@
-window.loadFirebugConsole();
+if (window.loadFirebugConsole != undefined) {
+  window.loadFirebugConsole();
+} else {
+  window.console = { log: function() {} };
+}
 
 /**
  * Globals.
@@ -39,6 +43,10 @@ var TorrentzPage = function() {
     // Add the rating column
     self.$.find('.results > div:first').append(' | rating');
   
+    // Add the ratings help bubble
+    $('<div class="ratings-help"><div class="comment-arrow" />Hover over the ratings to see movie info.</div>')
+        .prependTo(self.$.find('body'));
+        
     // Clone the rating cell and append it to each row in the "table"
     var missing_ratings = [];
     self.$.find('.results dl dd').width('325px').each(function() {
@@ -116,8 +124,8 @@ var TorrentzPage = function() {
       if (movies[hash]['html'] == undefined) {
         
         div.addClass('loading-movie')
-            .html('<div class="loading">Loading movie info...</div>')
-            .slideDown('normal');
+            .html('<div class="loading">Loading movie</div>');
+        if (!div.is(':visible')) { div.slideDown('normal'); }
             
         // Load the movie and re-trigger this event
         self.loadMovie(hash, function() {
@@ -130,8 +138,10 @@ var TorrentzPage = function() {
         // We are no longer "loading"
         if (loading) {
           div.removeClass('loading-movie');
+          
         }
-        div.html(movies[hash]['html']).slideDown('normal');
+        div.html(movies[hash]['html']);
+        if (!div.is(':visible')) { div.slideDown('normal'); }
       }
       
     });
@@ -256,10 +266,13 @@ var TorrentzPage = function() {
           + rating_text + '</a>');
 
       // Bind hover/blur handlers to show/hide movie info
-      span.find('a.rating_link').hover(
-        function() { self.movieInfoDiv.trigger('show', hash); },
-        function() { self.movieInfoDiv.trigger('hide'); }
-      );
+      span.find('a.rating_link').hoverIntent( {    
+        sensitivity: 3, // sensitivity threshold in pixels
+        interval: 200,  // polling interval
+        over: function() { self.movieInfoDiv.trigger('show', hash); },
+        timeout: 200,   // delay before onMouseOut is called
+        out: function() { self.movieInfoDiv.trigger('hide'); }
+      });
     }
 
     // Insert/update the rating in the DOM
