@@ -2,12 +2,14 @@
 .DS_Store
 .rsync_cache
 log/*.log
+tmp/*
 tmp/**/*
 tmp/restart.txt
 doc/api
 doc/app
 backups/**
 db/*.sqlite3
+public/sitemap*
 
 # Ignore local builds of unpacked gems
 vendor/gems/**/ext/**/Makefile

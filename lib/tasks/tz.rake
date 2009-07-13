@@ -22,9 +22,4 @@ namespace :tz do
     tzpage = TorrentzPage.find(ENV['ID'].to_i)
     extractAndLoadMovies(tzpage)
   end  
-  
-  def extractAndLoadMovies(tzpage)
-    tzpage.extractMovies
-    Movie.saveMoviesFromArray(tzpage.movies)
-  end  
 end

@@ -64,7 +64,7 @@ class TorrentzPage < ActiveRecord::Base
     tzpage
   end
   
-  def localUrl(local_url)
+  def localUrl(local_url='http://rottentorrentz.varzyfamily.com')
     self.url.sub(SITE_URL, local_url)
   end
   

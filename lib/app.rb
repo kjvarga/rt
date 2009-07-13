@@ -1,4 +1,6 @@
 module App
+  SITE_URL = 'http://rottentorrentz.varzyfamily.com'
+  
   def self.call_rake(task, options = {})
       options[:rails_env] ||= Rails.env
       args = options.map { |n, v| "#{n.to_s.upcase}='#{v}'" }
