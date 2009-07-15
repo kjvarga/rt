@@ -1,8 +1,11 @@
 #
 # Extend the built-in String class.
 #
+
+require 'cgi'
+
 class String
   def to_safe_uri
-    self.strip.downcase.gsub('&', 'and').gsub(' ', '-').gsub(/[^\w-]/,'')
+    CGI::escape(self.strip.downcase.gsub('&', 'and').gsub(' ', '-').gsub(/[^\w-]/,''))
   end
 end
