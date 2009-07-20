@@ -11,8 +11,6 @@
 #  updated_at :datetime
 #
 
-require 'mechanize'
-
 class TorrentzPage < ActiveRecord::Base
 
   attr_accessor :movies
@@ -23,6 +21,7 @@ class TorrentzPage < ActiveRecord::Base
   class << self
     def agent
       return @agent unless @agent.nil?
+      require 'mechanize'
       @agent = WWW::Mechanize.new 
     end
   end
@@ -32,7 +31,7 @@ class TorrentzPage < ActiveRecord::Base
   SITE_URL_REGEX = /^http:\/\/torrentz.com\//mi
   SRC_REGEX = /(<[^>]*?src=["\'])([^\'"]*?)(["\'][^>]*?>)/mi
   HREF_REGEX = /(<[^>]*?href=["\'])([^\'"]*?)(["\'][^>]*?>)/mi
-  STYLE_URL_REGEX = /(style=["\'].*\surl\(["\'])([^\'"]*?)(["\']\))/mi
+  STYLE_URL_REGEX = /(style=["\'].*?\surl\(["\'])([^\'"]*?)(["\']\))/mi
   TORRENT_MOVIE_REGEX = /<[^>]*?href=["\'](http:\/\/torrentz.com\/([a-z0-9]{40}?))["\'][^>]*?>(.*?)<\/a>/i
   IFRAME_REGEX = /<iframe[^>]*?>.*?<\/iframe>/mi
   HEAD_REGEX = /(<head[^>]*>)(.*?)(<\/head>)/mi
@@ -64,7 +63,7 @@ class TorrentzPage < ActiveRecord::Base
     tzpage
   end
   
-  def localUrl(local_url='http://rottentorrentz.varzyfamily.com')
+  def localUrl(local_url='http://rottentorrentz.com')
     self.url.sub(SITE_URL, local_url)
   end
   
@@ -86,7 +85,15 @@ class TorrentzPage < ActiveRecord::Base
     
   # Rewrite the links on the page, insert some items in the head
   def processPage(htmlarg=nil)
+    require 'nokogiri'
+    logger.debug "Processing page."
+    
     html = htmlarg.nil? ? self.html : htmlarg
+    return html if html.nil?
+    
+    # Extract the results div
+    doc = Nokogiri::HTML.parse(html)
+    html = doc.css('div.results')[0].to_s
     
     # Prepend all SRC links with the torrentz URL
     html.gsub!(SRC_REGEX) do |m|
@@ -101,12 +108,13 @@ class TorrentzPage < ActiveRecord::Base
     
     # Prepend all CSS urls with the torrentz URL
     html.gsub!(STYLE_URL_REGEX) do |m|
-      src = $2[0].chr == '/' ? $2[1..-1] : $2
-      prepended = "#{$1}#{TorrentzPage::SITE_URL}#{src}#{$3}"
-      if $2.match(SITE_URL_REGEX)
+      start, img, last = $1, $2, $3
+      logger.debug "Got style image #{img}..."
+      if img.match(SITE_URL_REGEX)
         m
       else
-        prepended
+        logger.debug "Replacing /img/ with /images/"
+        start + img.sub(/\/img\//, '/images/') + last
       end
     end
     
@@ -121,17 +129,6 @@ class TorrentzPage < ActiveRecord::Base
         prepended
       end
     end
-    
-    # Remove iframes
-    html.gsub!(IFRAME_REGEX, '')
-    
-    # Add our javascript include to the head.  Call after removing iframes.
-    html.sub!(HEAD_REGEX) do |m|
-      "#{$1}#{$2}#{TorrentzPage::HEAD_INCLUDE}#{$3}"
-    end
-    
-    # Remove everything before the results div
-    html.sub!(REMOVE_HEADER_REGEX, '\1\2')
     
     self.html = html if htmlarg.nil?
     html 

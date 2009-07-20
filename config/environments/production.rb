@@ -15,8 +15,9 @@ config.action_view.cache_template_loading            = true
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
 
-# Use a different cache store in production
-# config.cache_store = :mem_cache_store
+# Caching
+config.action_controller.perform_caching             = true
+config.cache_store = :file_store, "#{RAILS_ROOT}/tmp/cache"
 
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host = "http://assets.example.com"
@@ -30,3 +31,5 @@ config.action_mailer.sendmail_settings = {
   :location       => '/usr/sbin/sendmail',
   :arguments      => "-i -t -O DeliveryMode='b'"
 }
+
+Sass::Plugin.options[:style] = :compressed

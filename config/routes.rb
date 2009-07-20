@@ -40,11 +40,11 @@ ActionController::Routing::Routes.draw do |map|
   # consider removing the them or commenting them out if you're using named routes and resources.
   
   map.connect ':searchOrVerified', 
-      :controller => 'application', :action => 'torrentz',
+      :controller => 'torrentz', :action => 'index',
       :searchOrVerified => /(search[A-Z]?)|(verified[A-Z]?)/
   map.connect '/:controller/:action/:id/:title'
   
-  map.root :controller => 'application'
+  map.root :controller => 'torrentz'
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 end

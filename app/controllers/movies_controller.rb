@@ -35,7 +35,17 @@ class MoviesController < ApplicationController
   end
   
   def show
-    @movie = Movie.find_by_id(params[:id])
-    render @movie
+    unless read_fragment(
+        { :controller => 'movies', :action => 'show', :id => params[:id], :xml_request => request.xhr? }, 
+        { :expires_in => 1.day })
+        
+      @movie = Movie.find_by_id(params[:id])
+      @keywords = @title = @movie.rt_title
+      if request.xhr?
+        render @movie, :layout => false 
+      else 
+        render
+      end
+    end
   end
 end

@@ -1,0 +1,7 @@
+- content_for :head do
+  :javascript
+    $(function() {
+      var tzpage = new TorrentzPage();
+      tzpage.init(window);
+    });
+= @torrent_page.html

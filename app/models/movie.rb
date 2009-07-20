@@ -69,17 +69,17 @@ class Movie < ActiveRecord::Base
         movie_objs.push(m)
       end
     end
-    logger.debug 'INSPECTING THE MOVIE OBJECT ARRAY'
-    logger.debug movie_objs.inspect
+    logger.debug "saveMoviesFromArray: STARTING processing #{movie_objs.size} movies"
     movie_objs.each do |movie|
       movie.lock!
-      logger.debug "MOVIE #{movie.id} STATUS IS #{movie.status}"
-      break unless movie.status.nil? || movie.status == Movie::FAILED
-      logger.debug "LOADING MOVIE #{movie.id}"
+      logger.debug "saveMoviesFromArray: MOVIE #{movie.id} STATUS IS #{movie.status} TITLE IS #{movie.tz_title}"
+      next unless movie.status.nil? or movie.status == Movie::FAILED or (movie.status == Movie::LOADING and movie.updated_at < 1.day.ago)
+      logger.debug "saveMoviesFromArray: LOADING MOVIE #{movie.id}"
       movie.status = Movie::LOADING
       movie.save
       movie.lookupMovie
     end
+    logger.debug "saveMoviesFromArray: FINISHED processing #{movie_objs.length} movies"
   end
   
   # Download movies that have not been loaded yet

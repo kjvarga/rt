@@ -1,0 +1,17 @@
+- rating_class = 'not-available'; rating_text = 'N/A'
+- if !@movie.rt_rating.nil? && @movie.rt_rating > 0
+  - rating_class = @movie.rt_rating > 50 ? 'rating-fresh' : 'rating-rotten'
+  - rating_text = @movie.rt_rating.to_s + '%'
+    
+.movie-info
+  %div{ :class => "rating #{rating_class}" }
+    &= rating_text
+  %h1
+    &= @movie.rt_title
+  .left-pane
+    %img.movie-image{ :src => h(@movie.rt_img), :height => "204", :width => "144" }
+    .movie-links
+      = link_to 'Torrentz', @movie.tz_link, :id => 'movie_tz_link'
+      %br
+      = link_to 'RottenTomatoes', @movie.rt_link, :id => 'movie_rt_link'
+  = @movie.rt_info

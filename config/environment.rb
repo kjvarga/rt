@@ -22,7 +22,7 @@ Rails::Initializer.run do |config|
   config.gem "sqlite3-ruby", :lib => "sqlite3"
   config.gem "nokogiri", :version => ">=1.3.1", :use_system_gem => true
   config.gem "mechanize", :version => ">=0.9.3"
-  config.gem "redgreen", :version => ">=1.2.2"
+  config.gem "haml", :version => ">=2.0.9"
   
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named

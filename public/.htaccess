@@ -31,6 +31,7 @@ RewriteEngine On
 #RewriteRule ^(.*)$ http://127.0.0.1:3000%{REQUEST_URI} [P,QSA,L]
 
 RewriteRule ^$ index.html [QSA]
+RewriteRule ^/img/(.*)$ /images/$1 [QSA]
 RewriteRule ^([^.]+)$ $1.html [QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ dispatch.fcgi [QSA,L]

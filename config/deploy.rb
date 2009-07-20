@@ -24,7 +24,7 @@ ssh_options[:paranoid] = false
 # Names, Paths and Logins
 #
 set :application, "rottentorrentz"
-set :repository,  "git@github.com:kjvarga/rottentorrentz.git"
+set :repository,  "git@github.com:kjvarga/rt.git"
 set :domain,      "varzyfamily.com"
 set :user,        "kjvarga" # login name for the shared host.  it should also be the name of your home directory.
 set :use_sudo,    false     # no access to sudo on a shared host
@@ -32,7 +32,7 @@ set :use_sudo,    false     # no access to sudo on a shared host
 #
 # Custom Variables
 #
-set :application_symlink, "/home/#{user}/public_html/rottentorrentz.varzyfamily.com" # symlink the current release public folder to here
+set :application_symlink, "/home/#{user}/public_html/rottentorrentz.com" # symlink the current release public folder to here
 
 #
 # Deployment Setup
