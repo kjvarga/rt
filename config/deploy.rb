@@ -68,9 +68,9 @@ task :create_application_symlink, :roles => [:app] do
   run "ln -fs #{current_path}/public #{application_symlink}"
 end
 
-desc "After setup ensure the shared/db folder exists."
+desc "After setup ensure the shared/db and shared/backups folders exist."
 task :after_setup, :roles => [:app, :db, :web] do
-  run "umask 02 && mkdir -p #{shared_path}/db"
+  run "umask 02 && mkdir -p #{shared_path}/db && mkdir -p #{shared_path}/backups"
 end
 
 desc <<-DESC

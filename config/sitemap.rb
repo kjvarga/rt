@@ -20,13 +20,19 @@ SitemapGenerator::Sitemap.add_links do |sitemap|
   #sitemap.add articles_path, :priority => 0.7, :changefreq => 'weekly'
 
   # add torrentz pages
-  TorrentzPage.find(:all).each do |tz|
-    sitemap.add tz.localUrl(SitemapGenerator::Sitemap.default_host), :lastmod => tz.updated_at, :changefreq => 'daily'
+  TorrentzPage.find_in_batches(:batch_size => 1000) do |torrentzpages|
+    torrentzpages.each do |tz|
+      sitemap.add tz.localUrl(SitemapGenerator::Sitemap.default_host), :lastmod => tz.updated_
+at, :changefreq => 'daily'
+    end
   end
 
   # add movies
-  Movie.loaded_movies.find(:all).each do |m|
-    sitemap.add "/movies/show/#{m.to_param}", :lastmod => m.updated_at, :changefreq => 'weekly'
+  Movie.loaded_movies.find_in_batches(:batch_size => 1000) do |movies|
+    movies.each do |movie|
+      sitemap.add "/movies/show/#{movie.to_param}", :lastmod => movie.updated_at, :changefreq 
+=> 'weekly'
+    end
   end
   
 end
