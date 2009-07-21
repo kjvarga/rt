@@ -3,6 +3,21 @@ require 'nokogiri'
 require 'lib/app'
 
 namespace :app do
+  desc "Update the sitemap and symlink it to the public/system folder."
+  task :update_sitemap_and_symlink => :environment do
+
+    rakefile = File.join(RAILS_ROOT, 'Rakefile')
+    pub = File.join(RAILS_ROOT, 'public')
+    sys = File.join(RAILS_ROOT, 'public', 'system/', '')
+    
+    # If generation fails, copy from system back to public
+    if system("nice rake sitemap:refresh:no_ping -f #{rakefile} RAILS_ENV=#{RAILS_ENV}")
+      system("cp -f #{File.join(pub, 'sitemap')}* #{sys}")
+    else
+      system("cp -f #{File.join(sys, 'sitemap')}* #{pub}")
+    end
+  end
+  
   desc "Touch all links on all pages."
   task :touch_links do
     

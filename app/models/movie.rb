@@ -73,7 +73,11 @@ class Movie < ActiveRecord::Base
     movie_objs.each do |movie|
       movie.lock!
       logger.debug "saveMoviesFromArray: MOVIE #{movie.id} STATUS IS #{movie.status} TITLE IS #{movie.tz_title}"
-      next unless movie.status.nil? or movie.status == Movie::FAILED or (movie.status == Movie::LOADING and movie.updated_at < 1.day.ago)
+      unless movie.status.nil? \
+          or movie.status == Movie::FAILED \
+          or (movie.status == Movie::LOADING and movie.updated_at < 10.minutes.ago)
+        next
+      end
       logger.debug "saveMoviesFromArray: LOADING MOVIE #{movie.id}"
       movie.status = Movie::LOADING
       movie.save

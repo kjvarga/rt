@@ -1,3 +1,6 @@
+require 'action_controller'
+require 'action_controller/test_process'
+
 module SitemapGenerator
   module Helper
     def load_sitemap_rb
@@ -27,6 +30,7 @@ module SitemapGenerator
         :msn => "http://webmaster.live.com/ping.aspx?siteMap=#{index_location}",
         :sitemap_writer => "http://www.sitemapwriter.com/notify.php?crawler=all&url=#{index_location}"}.each do |engine, link|
         begin
+          require 'open-uri'
           open(link)
           puts "Successful ping of #{engine.to_s.titleize}"
         rescue StandardError => e

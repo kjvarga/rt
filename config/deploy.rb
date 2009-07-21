@@ -60,10 +60,21 @@ role :db,  "varzyfamily.com", :primary => true  # primary database
 #
 # Tasks
 #
-after "deploy:cold",        :create_application_symlink
-after "deploy:setup",       :create_application_symlink
+before "deploy",            :disable_web
+after  "deploy",            :symlink_sitemap_to_public
+after  "deploy",            :enable_web
+after  "deploy:cold",       :create_application_symlink
+after  "deploy:setup",      :create_application_symlink
 
-desc "Symlink the current release's public/ folder to a directory in public_html."
+task :disable_web, :roles => [:web] do find_and_execute_task('deploy:web:disable'); end
+task :enable_web,  :roles => [:web] do find_and_execute_task('deploy:web:enable');  end
+
+desc "Symlink the sitemap files from shared/system/ to the application's public/ folder."
+task :symlink_sitemap_to_public, :roles => [:app] do
+  run "ln -fs #{shared_path}/system/sitemap* #{current_path}/public"
+end
+
+desc "Symlink the current release's public/ folder to subdomain directory in public_html."
 task :create_application_symlink, :roles => [:app] do
   run "ln -fs #{current_path}/public #{application_symlink}"
 end

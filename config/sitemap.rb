@@ -22,17 +22,16 @@ SitemapGenerator::Sitemap.add_links do |sitemap|
   # add torrentz pages
   TorrentzPage.find_in_batches(:batch_size => 1000) do |torrentzpages|
     torrentzpages.each do |tz|
-      sitemap.add tz.localUrl(SitemapGenerator::Sitemap.default_host), :lastmod => tz.updated_
-at, :changefreq => 'daily'
+      sitemap.add tz.localUrl(SitemapGenerator::Sitemap.default_host), 
+          :lastmod => tz.updated_at, :changefreq => 'daily'
     end
   end
 
   # add movies
   Movie.loaded_movies.find_in_batches(:batch_size => 1000) do |movies|
     movies.each do |movie|
-      sitemap.add "/movies/show/#{movie.to_param}", :lastmod => movie.updated_at, :changefreq 
-=> 'weekly'
+      sitemap.add "/movies/show/#{movie.to_param}", :lastmod => movie.updated_at, 
+          :changefreq => 'weekly'
     end
   end
-  
 end
