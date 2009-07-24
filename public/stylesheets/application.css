@@ -1,0 +1,190 @@
+/* 
+ * Header */
+.header-push-content {
+  height: 65px;
+  clear: both; }
+
+.header {
+  height: 55px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #333;
+  color: #c3c3c3;
+  border-bottom: 5px solid #ff6633;
+  font-size: 14px;
+  font-family: verdana;
+  width: 100%;
+  z-index: 10; }
+  .header .content {
+    width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    left: 7px;
+    height: 100%; }
+  .header div.title {
+    position: absolute;
+    bottom: 10px;
+    left: -8px; }
+    .header div.title a {
+      font-size: 30px;
+      color: #ff6633;
+      text-decoration: none; }
+  .header .help {
+    background-color: #444444;
+    color: #CCCCCC;
+    font-size: 10px;
+    overflow: hidden;
+    padding: 5px;
+    position: absolute;
+    top: 0px;
+    right: 8px;
+    width: 450px;
+    text-align: left;
+    border-bottom: 1px solid #555;
+    border-right: 1px solid #555;
+    border-left: 1px solid #555;
+    margin: 0; }
+    .header .help a {
+      color: white; }
+    .header .help a.title {
+      color: #ff6633; }
+
+/* 
+ * Results */
+div.results {
+  clear: both; }
+  div.results > dl > dd {
+    width: 325px !important; }
+    div.results > dl > dd > span.a.rating {
+      width: 50px !important;
+      color: #333; }
+
+.rating_link {
+  text-decoration: underline; }
+
+.rating-fresh {
+  color: #df2822; }
+
+.rating-rotten {
+  color: #627d11; }
+
+.not-available {
+  color: #999999; }
+
+.movie-info-container {
+  z-index: 100;
+  position: fixed;
+  margin: 0 auto;
+  top: 60px;
+  left: 50%;
+  margin-left: -300px;
+  height: 400px;
+  width: 600px;
+  overflow-y: auto;
+  background-color: #333;
+  border-left: 5px solid #ff6633;
+  border-bottom: 5px solid #ff6633;
+  border-right: 5px solid #ff6633;
+  font-size: 12px;
+  color: #eee; }
+  .movie-info-container.loading-movie {
+    font-size: 20px;
+    margin: 0 auto;
+    left: 50%;
+    margin-left: -200px;
+    width: 400px;
+    height: 100px;
+    text-align: center;
+    line-height: 100px;
+    color: #ff6633; }
+
+.movie-info {
+  text-align: left;
+  padding: 20px; }
+  .movie-info a {
+    color: #8FAECC; }
+  .movie-info h1 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #ff6633; }
+  .movie-info .rating {
+    font-size: 50px;
+    float: right;
+    font-weight: bold;
+    margin: -5px -5px 0 0; }
+  .movie-info .left-pane {
+    float: left;
+    margin-bottom: 10px;
+    margin-right: 20px; }
+    .movie-info .left-pane .movie-links {
+      color: #ff6633;
+      text-align: right;
+      text-decoration: underline; }
+      .movie-info .left-pane .movie-links a {
+        color: #ff6633;
+        text-align: right;
+        text-decoration: underline; }
+  .movie-info img.movie-image {
+    border: 5px solid #111; }
+  .movie-info .movie_info_box {
+    margin-left: 155px; }
+  .movie-info .label {
+    color: #FF9F7E;
+    font-weight: bold;
+    margin-right: 2px; }
+  .movie-info div#movie_synopsis, .movie-info div#movie_castcrew {
+    margin: 5px 5px 10px; }
+
+.ratings-help {
+  background-color: #eee;
+  border: 1px solid #444;
+  color: #444;
+  margin: 5px;
+  padding: 5px;
+  float: right;
+  position: relative; }
+
+.comment-tl {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: transparent url(/images/sprite.png) no-repeat scroll 0 0;
+  top: -1px;
+  left: -1px;
+  background-position: 0 0; }
+
+.comment-tr {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: transparent url(/images/sprite.png) no-repeat scroll 0 0;
+  top: -1px;
+  right: -1px;
+  background-position: -5px 0; }
+
+.comment-bl {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: transparent url(/images/sprite.png) no-repeat scroll 0 0;
+  bottom: -1px;
+  left: -1px;
+  background-position: -10px 0; }
+
+.comment-br {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: transparent url(/images/sprite.png) no-repeat scroll 0 0;
+  bottom: -1px;
+  right: -1px;
+  background-position: -15px 0; }
+
+.comment-arrow {
+  position: absolute;
+  bottom: -10px;
+  right: 15px;
+  width: 10px;
+  height: 10px;
+  background: transparent url(/images/sprite.png) no-repeat scroll -20px 0; }

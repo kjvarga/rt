@@ -17,6 +17,8 @@ RewriteEngine On
 RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
 RewriteCond %{SCRIPT_FILENAME} !maintenance.html
 RewriteCond %{REQUEST_URI} !^/images/
+RewriteCond %{REQUEST_URI} !^/robots.txt
+RewriteCond %{REQUEST_URI} !^/sitemap
 RewriteRule ^.*$ /system/maintenance.html [L]
 
 # Otherwise serve all requests using the dispatcher.

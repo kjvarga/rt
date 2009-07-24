@@ -3,19 +3,36 @@ require 'nokogiri'
 require 'lib/app'
 
 namespace :app do
+  desc "Regenerate the SASS stylesheets."
+  task :update_sass => :environment do
+    Sass::Plugin.update_stylesheets
+  end
+  
   desc "Update the sitemap and symlink it to the public/system folder."
   task :update_sitemap_and_symlink do
     
     environment = ENV['RAILS_ENV'] || 'production'
     rakefile = File.join(RAILS_ROOT, 'Rakefile')
     pub = File.join(RAILS_ROOT, 'public')
-    sys = File.join(RAILS_ROOT, 'public', 'system/', '')
+    sys = File.join(RAILS_ROOT, 'public', 'system', '')
     
     # If generation fails, copy from system back to public
-    if system("nice rake sitemap:refresh:no_ping -f #{rakefile} RAILS_ENV=#{environment}")
+    if system("nice rake sitemap:refresh -f #{rakefile} RAILS_ENV=#{environment}")
       system("cp -f #{File.join(pub, 'sitemap')}* #{sys}")
     else
       system("cp -f #{File.join(sys, 'sitemap')}* #{pub}")
+    end
+  end
+  
+  desc "Translate the character encoding of RottenTomatoes info to unicode from CP1252"
+  task :translate_to_unicode => :environment do
+    Movie.find_in_batches(:batch_size => 1000) do |movies|
+      movies.each do |movie|
+        next if movie.rt_info.nil?
+        movie.save!
+        movie.rt_info = movie.rt_info + ' '
+        movie.save!
+      end
     end
   end
   

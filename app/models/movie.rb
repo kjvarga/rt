@@ -34,6 +34,9 @@ class Movie < ActiveRecord::Base
   named_scope :loaded_movies, :conditions => { :status => Movie::LOADED }
   named_scope :loaded_or_failed_movies, :conditions => { :status => [Movie::LOADED, Movie::FAILED] }
   
+  to_unicode :rt_info
+  to_unicode :rt_title
+  
   # Store a mechanize agent as a class instance variable
   @agent = nil
   class << self

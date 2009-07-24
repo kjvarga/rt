@@ -1,5 +1,5 @@
 module App
-  SITE_URL = 'http://rottentorrentz.varzyfamily.com'
+  SITE_URL = 'http://rottentorrentz.com'
   
   def self.call_rake(task, options = {})
       options[:rails_env] ||= Rails.env
