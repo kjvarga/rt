@@ -33,6 +33,7 @@ set :use_sudo,    false     # no access to sudo on a shared host
 # Custom Variables
 #
 set :application_symlink, "/home/#{user}/public_html/rottentorrentz.com" # symlink the current release public folder to here
+set :rails_env, 'production'
 
 #
 # Deployment Setup
@@ -65,6 +66,7 @@ after  "deploy:cold",        :create_application_symlink
 after  "deploy:setup",       :create_application_symlink
 after  "deploy:update_code", 'sass:update'
 after  'deploy:update_code', :symlink_sitemap_to_public
+after  "deploy:symlink",     "whenever:update_crontab"
 after  "deploy",             :enable_web
 
 task :disable_web, :roles => [:web] do find_and_execute_task('deploy:web:disable'); end
@@ -85,6 +87,18 @@ task :after_setup, :roles => [:app, :db, :web] do
   run "umask 02 && mkdir -p #{shared_path}/db && mkdir -p #{shared_path}/backups"
 end
 
+desc "Invoke a rake task on the remote server.  Call with TASK=the:task:name"
+task :invoke do
+  run("cd #{latest_release}; RAILS_ENV=#{rails_env} rake #{ENV['TASK']}")
+end
+
+namespace :whenever do
+  desc "Update the crontab file for whenever scheduled tasks."
+  task :update_crontab, :roles => :db do
+    run "cd #{release_path} && whenever --update-crontab #{application}"
+  end
+end
+  
 desc <<-DESC
   Parse the enviroment files and for those gems that we want to use the
   system gem, delete the local gem from vendor/gems.  To mark a local gem for

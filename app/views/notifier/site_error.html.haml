@@ -1,0 +1,14 @@
+%p
+  URL:
+  %a{ :href => @url }
+    @url
+%p
+  Status:
+  = @response.class.to_s
+%p
+  Message:
+  = @response.message
+%p
+  Response:
+  %br
+  = @response.body

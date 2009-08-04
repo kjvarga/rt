@@ -23,6 +23,7 @@ Rails::Initializer.run do |config|
   config.gem "nokogiri", :version => ">=1.3.1", :use_system_gem => true
   config.gem "mechanize", :version => ">=0.9.3"
   config.gem "haml", :version => ">=2.0.9"
+  config.gem "javan-whenever", :version => ">=0.3.6", :lib => false, :source => 'http://gems.github.com'
   
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
@@ -42,4 +43,5 @@ Rails::Initializer.run do |config|
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
+  config.action_mailer.register_template_extension('haml')
 end

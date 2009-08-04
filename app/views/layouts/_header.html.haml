@@ -1,7 +1,7 @@
 .header
   .content
     .help
-      = link_to('RottenTorrentz', root_path, :class => 'title')
+      = link_to(SiteDefaults::NAME, root_path, :class => 'title')
       adds movie ratings from
       %a{ :href => "http://rottentomatoes.com", :target => "_blank" }
         RottenTomatoes.com
@@ -10,6 +10,6 @@
         Torrentz.com
       listings.
     .title
-      = link_to('RottenTorrentz', root_path)
+      = link_to(SiteDefaults::NAME, root_path)
       movie info for your torrents
 .header-push-content
