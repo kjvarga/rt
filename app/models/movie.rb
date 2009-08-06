@@ -74,7 +74,7 @@ class Movie < ActiveRecord::Base
     end
     logger.debug "saveMoviesFromArray: STARTING processing #{movie_objs.size} movies"
     movie_objs.each do |movie|
-      movie.lock!
+      #movie.lock!
       logger.debug "saveMoviesFromArray: MOVIE #{movie.id} STATUS IS #{movie.status} TITLE IS #{movie.tz_title}"
       unless movie.status.nil? \
           or movie.status == Movie::FAILED \
@@ -93,7 +93,7 @@ class Movie < ActiveRecord::Base
   def self.loadNewMovies
     movies = Movie.new_movies.find(:all, :order => :created_at)
     movies.each do |movie|
-      movie.lock!
+      #movie.lock!
       break unless movie.status.nil?
       movie.status = Movie::LOADING
       movie.save

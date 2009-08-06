@@ -48,11 +48,11 @@ class TorrentzPage < ActiveRecord::Base
     
     # Try to find a saved copy
     url ||= TorrentzPage::VERIFIED_URL
-    tzpage = TorrentzPage.find(:first, :conditions => { :url => url }, :lock => true)
+    tzpage = TorrentzPage.find(:first, :conditions => { :url => url }) #, :lock => true)
     
     # If we haven't got one, download it
     if tzpage.nil?
-      tzpage = TorrentzPage.create(:url => url).lock!
+      tzpage = TorrentzPage.create(:url => url) #.lock!
     end
     
     if tzpage.html.nil?
