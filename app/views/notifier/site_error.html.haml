@@ -1,7 +1,7 @@
 %p
   URL:
-  %a{ :href => @url }
-    @url
+  %a{ :href => @url.to_s }
+    = @url.to_s
 %p
   Status:
   = @response.class.to_s

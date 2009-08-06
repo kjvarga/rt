@@ -5,7 +5,7 @@ class Notifier < ActionMailer::Base
      content_type "text/html"
      recipients ExceptionNotifier.exception_recipients
      from       ExceptionNotifier.sender_address
-     subject    ExceptionNotifier.email_prefix + ' ' + response.body[0..300]
+     subject    ExceptionNotifier.email_prefix + ' ' + response.message + ' ' + response.body[0..300]
      body       :response => response, :url => url
    end
 end
