@@ -1,32 +1,14 @@
-# == Schema Information
-# Schema version: 20090705150709
-#
-# Table name: movies
-#
-#  id         :integer         not null, primary key
-#  tz_link    :string(255)
-#  rt_link    :string(255)
-#  year       :integer
-#  rt_img     :string(255)
-#  rt_rating  :integer
-#  rt_info    :text
-#  rt_title   :string(255)
-#  tz_title   :string(255)
-#  tz_hash    :string(255)
-#  created_at :datetime
-#  updated_at :datetime
-#  status     :string(255)
-#
-
 require 'cgi'
 require 'nokogiri'
 
-class Movie < ActiveRecord::Base
-  
+class Movie < ActiveRecord::Base      
+  JUNK_WORDS = %w{xvid dvdrip com org rarbg ac3 german avi x264 pack btarena collection tracker 720p mvgroup bluray limited mega bmovieb www 1080p axxo pal dvd eng vomit divx bmoviebs hdtv domino mnvv2 fxg dvdscr dvdr complete channel zektorm cam komplett hd2dvd dts filme devise info moh unrated tinq91 rip french tfe dvd9 proper audio net bestdivx wars zeichentrickfilm internal torrent telesync stv screener brrip}
+    
   LOADING = 'loading'
   LOADED = 'loaded'
   FAILED = 'failed'
   
+  before_save :normalize_titles
   validates_uniqueness_of :tz_hash
   named_scope :new_movies, :conditions => { :status => nil }
   named_scope :loading_movies, :conditions => { :status => Movie::LOADING }
@@ -165,4 +147,88 @@ class Movie < ActiveRecord::Base
     title = self.rt_title || 'loading-failed'
     "#{self.id}/#{title.to_safe_uri}"
   end
+  
+  # 
+  # Trigrams search methods
+  #
+  # Return a degree of match between a comparison string and this model's trigrams.
+  #
+  def fuzzy_compare(search_words)
+    # TODO strip off 'the' from search titles
+    # maybe match minus the year for short titles
+    # Current threshold is solid to 68% and can be pushed to 50% with more processing
+    # which is 84 movies or 8.3% of movies.
+    search_words = Movie::normalize_words(search_words)
+    search_trigrams = Movie::trigrams(search_words, true)     
+    
+    title_words = self.normalized_tz_title
+    title_trigrams = Movie::trigrams(title_words, true)     
+
+    #puts "Original title: #{rt_title}"
+    #puts "Normalized title: #{title_words}"
+    #puts "Search words: #{search_words}"
+    
+    # Calculate the percentage of search trigrams matched in the movie title
+    count = 0.0
+    search_trigrams.each do |trigram|
+      count += 1 if title_trigrams.include?(trigram)
+    end
+    percent = ((count / search_trigrams.length) * 100).to_i
+    #puts "Percent match: #{percent}"
+    percent
+  end
+
+  # Normalize the rottentomatoes title
+  def normalized_rt_title
+    return self[:normalized_rt_title] if attribute_present?(:normalized_rt_title) or !attribute_present?(:rt_title)
+    return self[:normalized_rt_title] = Movie::normalize_words(self.rt_title)
+  end
+  
+  # Normalize the tz title as well as remove common words
+  def normalized_tz_title
+    return self[:normalized_tz_title] if attribute_present?(:normalized_tz_title) or !attribute_present?(:tz_title)
+    title_words = Movie::normalize_words(self.tz_title).split(/\s+/)
+    title_words.delete_if { |word| Movie::JUNK_WORDS.include?(word) }
+    return self[:normalized_tz_title] = title_words.join(' ')
+  end
+    
+  private
+    # Touch the titles to make sure they're set
+    def normalize_titles
+      normalized_rt_title
+      normalized_tz_title
+      self
+    end
+    
+    # Normalize a search term by downcasing it, removing punctuation and multiple spaces
+    def self.normalize_words(word)
+      return word.strip.downcase.gsub(/[^\w\d ]/, '')
+    end
+
+    # Return the trigrams that form *word*, optionally appending a space on the end to
+    # weight a match on the end of the word.  A space is always added to the beginning.
+    def self.trigrams(word, weighted_end=false)
+      word = ' ' + word + (weighted_end ? ' ' : '')
+      return (0..word.length-3).collect { |idx| word[idx,3] }
+    end
 end
+
+
+# == Schema Info
+# Schema version: 20090808053720
+#
+# Table name: movies
+#
+#  id         :integer         not null, primary key
+#  rt_img     :string(255)
+#  rt_info    :text
+#  rt_link    :string(255)
+#  rt_rating  :integer         default(0)
+#  rt_title   :string(255)
+#  status     :string(255)
+#  tz_hash    :string(255)
+#  tz_link    :string(255)
+#  tz_title   :string(255)
+#  year       :integer
+#  created_at :datetime
+#  updated_at :datetime

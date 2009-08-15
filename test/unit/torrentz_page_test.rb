@@ -90,3 +90,15 @@ class TorrentzPageTest < ActiveSupport::TestCase
     assert_equal Movie::LOADED, test.status, "movie should have been reloaded"
   end
 end
+
+# == Schema Info
+# Schema version: 20090808053720
+#
+# Table name: torrentz_pages
+#
+#  id         :integer         not null, primary key
+#  html       :text
+#  params     :string(255)
+#  url        :string(255)     not null
+#  created_at :datetime
+#  updated_at :datetime

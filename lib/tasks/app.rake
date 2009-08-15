@@ -3,6 +3,67 @@ require 'nokogiri'
 require 'lib/app'
 
 namespace :app do
+  task :movie_title_report => :environment do
+    
+    matched, unmatched, threshold = [], [], 68
+    Movie.loaded_movies.find_in_batches(:batch_size => 1000, :select => 'rt_title, tz_title') do |movies|
+      movies.each do |movie|
+        if (percent = movie.fuzzy_compare(movie.rt_title)) >= threshold
+          matched.push([percent, movie])
+        else
+          unmatched.push([percent, movie])
+        end
+      end
+    end
+    
+    # Sort by highest percent first
+    matched = matched.sort { |a, b| -1*(a[0] <=> b[0]) }
+    unmatched = unmatched.sort { |a, b| -1*(a[0] <=> b[0]) }
+    
+    puts "---------- Matched movies -------------"
+    matched.each do |percent, movie| 
+      puts "%3d%%  %-4s  %-70s  %-70s" % [percent, movie.id, movie.tz_title, movie.rt_title]
+    end
+    puts "--------- Unmatched movies ------------"
+    unmatched.each do |percent, movie| 
+      puts "%3d%%  %-4s  %-70s  %-70s" % [percent, movie.id, movie.tz_title, movie.rt_title]
+    end
+  end
+  
+  desc "Find common words that appear in movie titles that can be filtered out."
+  task :common_words => :environment do
+    words = {}
+    Movie.loaded_movies.find_in_batches(:batch_size => 1000, :select => :tz_title) do |movies|
+      movies.each do |movie|
+        # strip punctuation and convert to lowercase
+        title = movie.tz_title.strip.downcase.gsub(/[^\w\d ]/, '')
+        title.split.each do |word|
+          words[word] = words[word].nil? ? 1 : words[word] += 1
+        end
+      end
+    end
+    
+    # Sort by most common first
+    words = words.sort { |a, b| -1*(a[1] <=> b[1]) }[0..100]
+    
+    puts "Most common words\nCount Word"
+    words.each do |word , count| 
+      puts "%-6s %s" % [count, word]
+    end
+    puts "\n\n"
+    
+    # Remove words which are all digits and those less than 3 characters long,
+    # as well as some common words
+    omit = %w{the and bbc season history edition universe star for done ultimate denzel}
+    words.delete_if do |word , count| 
+      word.length <= 2 || !word.match(/^\d+$/).nil? || omit.include?(word) || count <= 5
+    end
+    words = words.map { |word, count| word }
+
+    puts "Common words to filter as a Ruby expression:"
+    puts '%w{'+words.join(' ')+'}'
+  end
+  
   desc "Regenerate the SASS stylesheets."
   task :update_sass => :environment do
     Sass::Plugin.update_stylesheets
