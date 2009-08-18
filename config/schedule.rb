@@ -19,7 +19,7 @@
 
 # Learn more: http://github.com/javan/whenever
 
-set :cron_log, "/path/to/my/cron_log.log"
+set :cron_log, "~/sites/rottentorrentz/current/log/cron_log.log"
 
 every 3.days do
   rake "app:update_sitemap_and_symlink"

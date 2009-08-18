@@ -10,6 +10,7 @@ doc/app
 backups/**
 db/*.sqlite3
 public/sitemap*
+*.info
 
 # Ignore local builds of unpacked gems
 vendor/gems/**/ext/**/Makefile
