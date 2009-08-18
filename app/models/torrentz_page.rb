@@ -54,7 +54,7 @@ class TorrentzPage < ActiveRecord::Base
   end
   
   def localUrl(local_url='http://rottentorrentz.com')
-    self.url.sub(SITE_URL, local_url)
+    self.url.sub(SITE_URL, local_url).gsub(/ /, '%20')
   end
   
   # Load the torrentz page and store it in this instance

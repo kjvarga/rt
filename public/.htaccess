@@ -12,14 +12,20 @@ Options +FollowSymLinks +ExecCGI
 
 RewriteEngine On
 
+# Uncomment the following to forward requests to a mongrel/webrick
+# server running locally on port 3000.  Useful for testing problems
+# during application start.
+#RewriteRule ^(.*)$ http://127.0.0.1:3000%{REQUEST_URI} [P,QSA,L]
+
 # Capistrano deploy:disable:web task: serve maintenance page if it exists
 # and allow access to images.
+ErrorDocument 503 /system/maintenance.html
 RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
 RewriteCond %{SCRIPT_FILENAME} !maintenance.html
 RewriteCond %{REQUEST_URI} !^/images/
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/sitemap
-RewriteRule ^.*$ /system/maintenance.html [L]
+RewriteRule ^.*$  -  [redirect=503,last]
 
 # Otherwise serve all requests using the dispatcher.
 RewriteRule ^$ index.html [QSA]
