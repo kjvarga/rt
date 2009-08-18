@@ -1,3 +1,7 @@
+= This Fork
+
+Reduces the number of records that are read into memory to 250 from 1000 for shared servers where memory usage is limited quite severely.
+
 = YamlDb
 
 YamlDb is a database-independent format for dumping and restoring data.  It complements the the database-independent schema format found in db/schema.rb.  The data is saved into db/data.yml.
