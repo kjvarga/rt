@@ -1,5 +1,7 @@
 class MoviesController < ApplicationController
   
+  RETRY_AFTER_FAILED_ATTEMPTS = 5
+  
   # Get ratings for a number of movies identified by their hash
   def ratings
     movies = Movie.loaded_or_failed_movies.find_all_by_tz_hash(
@@ -13,7 +15,7 @@ class MoviesController < ApplicationController
         :status => movie.status }
     end
     
-    # If no movies have been loaded after 2 calls, something must
+    # If no movies have been loaded after 5 calls, something must
     # be wrong, so force a load.
     if movies.length == 0
       if session['failed_movie_requests'].nil?
@@ -21,7 +23,7 @@ class MoviesController < ApplicationController
       end
       session['failed_movie_requests'] += 1
       logger.info "#{session['failed_movie_requests']} failed attempt to load movies for url #{params[:url]}"
-      if session['failed_movie_requests'] >= 3
+      if session['failed_movie_requests'] >= MoviesController::RETRY_AFTER_FAILED_ATTEMPTS
         url = params[:url].sub('rottentorrentz.local', 'torrentz.com')
         logger.info "Third failed attempt to load movies!  Calling rake for url #{params[:url]} (tz page id #{session[:torrentz_page_id]})"
         App::call_rake('tz:load_movies', :id => session[:torrentz_page_id])

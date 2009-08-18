@@ -5,13 +5,19 @@ require 'lib/app'
 namespace :app do
   task :movie_title_report => :environment do
     
-    matched, unmatched, threshold = [], [], 68
-    Movie.loaded_movies.find_in_batches(:batch_size => 1000, :select => 'rt_title, tz_title') do |movies|
+    matched, unmatched, conservative, threshold = [], [], [], Movie::THRESHOLD
+    # , :select => 'id, rt_title, tz_title'
+    Movie.loaded_movies.find_in_batches(:batch_size => 1000) do |movies|
       movies.each do |movie|
         if (percent = movie.fuzzy_compare(movie.rt_title)) >= threshold
           matched.push([percent, movie])
         else
           unmatched.push([percent, movie])
+          
+          # Try conservative matching
+          if (conpercent = movie.fuzzy_compare(movie.rt_title, true)) >= threshold
+            conservative.push([conpercent, percent, movie])
+          end
         end
       end
     end
@@ -22,11 +28,15 @@ namespace :app do
     
     puts "---------- Matched movies -------------"
     matched.each do |percent, movie| 
-      puts "%3d%%  %-4s  %-70s  %-70s" % [percent, movie.id, movie.tz_title, movie.rt_title]
+      puts "%3d%%  %-6s  %-70s  %-70s" % [percent, movie.id, movie.tz_title, movie.rt_title]
     end
     puts "--------- Unmatched movies ------------"
     unmatched.each do |percent, movie| 
-      puts "%3d%%  %-4s  %-70s  %-70s" % [percent, movie.id, movie.tz_title, movie.rt_title]
+      puts "%3d%%  %-6s  %-70s  %-70s" % [percent, movie.id, movie.tz_title, movie.rt_title]
+    end
+    puts "--------- Titles that benefited from Conservative matching ------------"
+    conservative.each do |conpercent, percent, movie| 
+      puts "%3d%% -> %3d%%  %-6s  %-70s  %-70s" % [percent, conpercent, movie.id, movie.tz_title, movie.rt_title]
     end
   end
   

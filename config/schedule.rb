@@ -25,4 +25,8 @@ every 3.days do
   rake "app:update_sitemap_and_symlink"
 end
 
-# touch the home page every 5 minutes and ping the site to see if it's alive
+# Touch some pages every so often to keep the data 
+# fresh and ensure the site is alive
+#every 10.minutes do
+  
+#end

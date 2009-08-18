@@ -92,13 +92,14 @@ class TorrentzPageTest < ActiveSupport::TestCase
 end
 
 # == Schema Info
-# Schema version: 20090808053720
+# Schema version: 20090815080340
 #
 # Table name: torrentz_pages
 #
 #  id         :integer         not null, primary key
 #  html       :text
 #  params     :string(255)
+#  tz_movies  :text
 #  url        :string(255)     not null
 #  created_at :datetime
 #  updated_at :datetime

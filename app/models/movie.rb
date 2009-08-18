@@ -2,8 +2,9 @@ require 'cgi'
 require 'nokogiri'
 
 class Movie < ActiveRecord::Base      
-  JUNK_WORDS = %w{xvid dvdrip com org rarbg ac3 german avi x264 pack btarena collection tracker 720p mvgroup bluray limited mega bmovieb www 1080p axxo pal dvd eng vomit divx bmoviebs hdtv domino mnvv2 fxg dvdscr dvdr complete channel zektorm cam komplett hd2dvd dts filme devise info moh unrated tinq91 rip french tfe dvd9 proper audio net bestdivx wars zeichentrickfilm internal torrent telesync stv screener brrip}
-    
+  JUNK_WORDS = %w{xvid dvdrip com org rarbg ac3 german avi x264 pack btarena collection tracker 720p mvgroup bluray limited mega movie www 1080p axxo pal dvd eng vomit divx movies hdtv domino mnvv2 fxg dvdscr dvdr complete channel zektorm cam komplett hd2dvd dts filme devise info moh unrated tinq91 rip french tfe dvd9 proper audio net bestdivx wars zeichentrickfilm internal torrent telesync stv screener brrip}
+  THRESHOLD = 50  # 50% threshold on matching trigrams
+  
   LOADING = 'loading'
   LOADED = 'loaded'
   FAILED = 'failed'
@@ -36,7 +37,18 @@ class Movie < ActiveRecord::Base
     Regexp.new('(<div id="movie_info_box"[^>]*>(.*?</div>){'+inner_divs.to_s+'})', 
         Regexp::IGNORECASE|Regexp::MULTILINE) 
   }
-  
+
+  #
+  # Dynamically add status discovery methods: is_loaded?, is_failed? etc
+  #
+  def method_missing(method_id, *arguments)
+    if match = /is_(\w+)\?/.match(method_id.to_s)
+      self.status == match[1]
+    else
+      super
+    end
+  end
+    
   # Create movie instances for movies that don't yet exist in the db
   # from an array of [link, hash, title] tuples, and then load them.
   # Also reloads failed movies.
@@ -151,14 +163,19 @@ class Movie < ActiveRecord::Base
   # 
   # Trigrams search methods
   #
-  # Return a degree of match between a comparison string and this model's trigrams.
+  
+  # Return a degree of match between a RottenTomatoes movie title 
+  # and movie's title.
   #
-  def fuzzy_compare(search_words)
-    # TODO strip off 'the' from search titles
-    # maybe match minus the year for short titles
-    # Current threshold is solid to 68% and can be pushed to 50% with more processing
-    # which is 84 movies or 8.3% of movies.
-    search_words = Movie::normalize_words(search_words)
+  # @param conservative true/false/"auto", default false
+  def fuzzy_compare(search_words, conservative=false)
+    return 0 if search_words.blank?
+    
+    if conservative
+      search_words = Movie::conservative_normalize_rt_title(search_words)
+    else
+      search_words = Movie::normalize_words(search_words)
+    end
     search_trigrams = Movie::trigrams(search_words, true)     
     
     title_words = self.normalized_tz_title
@@ -173,23 +190,31 @@ class Movie < ActiveRecord::Base
     search_trigrams.each do |trigram|
       count += 1 if title_trigrams.include?(trigram)
     end
-    percent = ((count / search_trigrams.length) * 100).to_i
+    percent = search_trigrams.empty? ? 0 : ((count / search_trigrams.length) * 100).to_i
     #puts "Percent match: #{percent}"
     percent
   end
-
-  # Normalize the rottentomatoes title
-  def normalized_rt_title
-    return self[:normalized_rt_title] if attribute_present?(:normalized_rt_title) or !attribute_present?(:rt_title)
-    return self[:normalized_rt_title] = Movie::normalize_words(self.rt_title)
-  end
   
   # Normalize the tz title as well as remove common words
+  # This method uses actionview helpers so it needs the Rails environment!
   def normalized_tz_title
     return self[:normalized_tz_title] if attribute_present?(:normalized_tz_title) or !attribute_present?(:tz_title)
-    title_words = Movie::normalize_words(self.tz_title).split(/\s+/)
-    title_words.delete_if { |word| Movie::JUNK_WORDS.include?(word) }
-    return self[:normalized_tz_title] = title_words.join(' ')
+    
+    title_words = self.tz_title
+    
+    require 'cgi'
+    title_words = CGI::unescapeHTML(title_words) # convert &quot; etc to regular characters
+    title_words = ActionController::Base.helpers.strip_tags(title_words) # remove <b> tages etc
+
+    # Lowercase, strip punctuation
+    title_words = Movie::normalize_words(title_words)
+    
+    # Remove junk words.  Do this after stripping html tags
+    title_words = title_words.split(/\s+/)
+    title_words.delete_if { |word| Movie::JUNK_WORDS.include?(word) }  
+    title_words = title_words.join(' ')
+    
+    return self[:normalized_tz_title] = title_words
   end
     
   private
@@ -198,6 +223,21 @@ class Movie < ActiveRecord::Base
       normalized_rt_title
       normalized_tz_title
       self
+    end
+    
+    # Normalize the rottentomatoes title
+    #
+    # Remove leading 'the', 'a' and 'and' from the title because the TZ title often doesn't
+    # include these words.
+    # Remove the year from titles that are just a few words because often the TZ
+    # movie year is incorrect and this throws off the match for short titles.
+    # Change '&' to 'and'.
+    def self.conservative_normalize_rt_title(title)
+      title = title.strip.downcase.gsub(/[^\w\d ]/, '')
+      title.gsub!(/^((the|a|and)\b)/, '')
+      title.gsub!(/\s\d{4}$/, '')  # the year should be at the end
+      title.gsub!(/\s&\s/, ' and ')
+      title
     end
     
     # Normalize a search term by downcasing it, removing punctuation and multiple spaces
@@ -213,22 +253,23 @@ class Movie < ActiveRecord::Base
     end
 end
 
-
 # == Schema Info
-# Schema version: 20090808053720
+# Schema version: 20090815080340
 #
 # Table name: movies
 #
-#  id         :integer         not null, primary key
-#  rt_img     :string(255)
-#  rt_info    :text
-#  rt_link    :string(255)
-#  rt_rating  :integer         default(0)
-#  rt_title   :string(255)
-#  status     :string(255)
-#  tz_hash    :string(255)
-#  tz_link    :string(255)
-#  tz_title   :string(255)
-#  year       :integer
-#  created_at :datetime
-#  updated_at :datetime
+#  id                  :integer         not null, primary key
+#  normalized_rt_title :string(255)
+#  normalized_tz_title :string(255)
+#  rt_img              :string(255)
+#  rt_info             :text
+#  rt_link             :string(255)
+#  rt_rating           :integer         default(0)
+#  rt_title            :string(255)
+#  status              :string(255)
+#  tz_hash             :string(255)
+#  tz_link             :string(255)
+#  tz_title            :string(255)
+#  year                :integer
+#  created_at          :datetime
+#  updated_at          :datetime

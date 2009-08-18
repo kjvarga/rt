@@ -45,7 +45,9 @@ $.fn.delay = function(time, callback) {
  *
  * *movies* holds all the information about movies, keyed by hash.
  */
-var movies = {};
+if (window.movies == undefined) {
+  var movies = {};
+}
 var current_page = '';
 
 var TorrentzPage = function() {
@@ -330,7 +332,7 @@ jQuery.extend(TorrentzPage, {
   bindHandlersToRottenTomatoesLinks: function(element) {
     
     element.click(function(e) {
-      var link = $(e.originalTarget);
+      var link = $(e.target);
       
       // Show more synopsis
       if (link.is('a#movie_synopsis_link')) {

@@ -1,7 +1,8 @@
 class TorrentzPage < ActiveRecord::Base
-
+  
   attr_accessor :movies
   validates_uniqueness_of :url
+  serialize(:tz_movies, Array)
   
   # Store a mechanize agent as a class instance variable
   @agent = nil
@@ -15,6 +16,8 @@ class TorrentzPage < ActiveRecord::Base
   
   SITE_URL = 'http://torrentz.com/'
   VERIFIED_URL = 'http://torrentz.com/verified?q=movie&p=0'
+  POPULAR_URL = 'http://torrentz.com/verifiedP?q=movie&p=0'
+  
   SITE_URL_REGEX = /^http:\/\/torrentz.com\//mi
   SRC_REGEX = /(<[^>]*?src=["\'])([^\'"]*?)(["\'][^>]*?>)/mi
   HREF_REGEX = /(<[^>]*?href=["\'])([^\'"]*?)(["\'][^>]*?>)/mi
@@ -62,11 +65,16 @@ class TorrentzPage < ActiveRecord::Base
   end
   
   # Extract the movie links, titles and hashes from the html and
-  # store them in an instance variable
+  # store them in an instance variable containing [link, hash, title] tuples.
+  # If called without the optional *htmlarg* we also set an array
+  # of movie hashes in *tz_movies*
   def extractMovies(htmlarg=nil)
     html = htmlarg.nil? ? self.html : htmlarg
-    movies = html.scan(TORRENT_MOVIE_REGEX)
-    self.movies = movies if htmlarg.nil?
+    movies = html.blank? ? [] : html.scan(TORRENT_MOVIE_REGEX)
+    if htmlarg.nil?
+      self.movies = movies 
+      self.tz_movies = movies.map { |tuple| tuple[1] }
+    end
     movies
   end
     
@@ -123,13 +131,14 @@ class TorrentzPage < ActiveRecord::Base
 end
 
 # == Schema Info
-# Schema version: 20090808053720
+# Schema version: 20090815080340
 #
 # Table name: torrentz_pages
 #
 #  id         :integer         not null, primary key
 #  html       :text
 #  params     :string(255)
+#  tz_movies  :text
 #  url        :string(255)     not null
 #  created_at :datetime
 #  updated_at :datetime
