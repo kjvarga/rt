@@ -1,21 +1,44 @@
-= This Fork
-
-Reduces the number of records that are read into memory to 250 from 1000 for shared servers where memory usage is limited quite severely.
-
 = YamlDb
 
-YamlDb is a database-independent format for dumping and restoring data.  It complements the the database-independent schema format found in db/schema.rb.  The data is saved into db/data.yml.
+YamlDb is a database-independent format for dumping and restoring data.  It complements the  database-independent schema format found in db/schema.rb.
 
-This can be used as a replacement for mysqldump or pg_dump, but only for the databases typically used by Rails apps.  Users, permissions, schemas, triggers, and other advanced database features are not supported - by design.
+Data is written and read from db/data.yml, or to file of your choosing.  Records are written in batches making this perfect for dumping very large databases or on systems with limited memory resources, such as shared hosting.  A modest 250 records are read at a time though this value can be overridden when calling the Rake tasks.
+
+YamlDb can be used as a replacement for mysqldump or pg_dump, but only for the databases typically used by Rails apps.  Users, permissions, schemas, triggers, and other advanced database features are not supported - by design.
 
 Any database that has an ActiveRecord adapter should work.
 
+== This Fork
+
+Reduces the number of records that are read into memory to 250 from 1000 and allows
+this value to be changed when running Rake tasks.  I've also allowed the data file location to be passed to the Rake tasks.
+
+== Install
+
+To install as a gem:
+
+  gem install kjvarga-yaml_db --source http://gems.github.com
+
+Or as a plugin:
+  
+  ./script plugin install http://github.com/kjvarga/yaml_db.git
+
 == Usage
+  
+The following dumps your Rails database schema to db/schema.rb and your database contents 
+to db/data.yml (unless you sepecify a different DATA_FILE).  You can also change
+how many records are read at a time by passing a BATCH_SIZE argument.  
 
-rake db:data:dump   ->   Dump contents of Rails database to db/data.yml
-rake db:data:load   ->   Load contents of db/data.yml into the database
+(Note that this dumps all tables except *schema_info* and *schema_migrations*.)
 
-Further, there are tasks db:dump and db:load which do the entire database (the equivalent of running db:schema:dump followed by db:data:load).
+  rake db:data:dump [DATA_FILE=/optional/path/to/data/file.yml] [BATCH_SIZE=250]
+  
+Then to load the data (ostensibly after modifying your config/database.yml settings for
+your new database).  Records are read and inserted one at a time.
+
+  rake db:data:load [DATA_FILE=/optional/path/to/data/file.yml]
+
+There are also tasks db:dump and db:load which are the equivalent of running db:schema:dump followed by db:data:load.
 
 == Examples
 
@@ -34,6 +57,8 @@ One common use would be to switch your data from one database backend to another
 Created by Orion Henry and Adam Wiggins.  Major updates by Ricardo Chimal, Jr.
 
 Patches contributed by Michael Irwin, Tom Locke, and Tim Galeckas.
+
+This fork modifications by Karl Varga.
 
 Send questions, feedback, or patches to the Heroku mailing list: http://groups.google.com/group/heroku
 

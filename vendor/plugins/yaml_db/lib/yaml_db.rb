@@ -4,8 +4,9 @@ require 'active_record'
 
 
 module YamlDb
-	def self.dump(filename)
+	def self.dump(filename, batch_size=nil)
 		disable_logger
+		YamlDb::Dump.instance_variable_set(:@batch_size, batch_size)
 		YamlDb::Dump.dump(File.new(filename, "w"))
 		reenable_logger
 	end
@@ -99,10 +100,10 @@ module YamlDb::Dump
 
 	def self.dump_table_records(io, table)
 		table_record_header(io)	
-	
 		column_names = table_column_names(table)
-
-		each_table_page(table) do |records|
+    batch_size = YamlDb::Dump.instance_variable_get(:@batch_size) || YamlDb::Dump::RECORDS_PER_PAGE
+    
+		each_table_page(table, batch_size) do |records|
 			rows = YamlDb::Utils.unhash_records(records, column_names)
 			io.write(YamlDb::Utils.chunk_records(records))
 		end
@@ -124,6 +125,7 @@ module YamlDb::Dump
 		quoted_table_name = YamlDb::Utils.quote_table(table)
 		
 		(0..pages).to_a.each do |page|
+		  puts "Processing records #{page*records_per_page} to #{records_per_page*page + records_per_page} of #{total_count} from #{quoted_table_name}"
 			sql = ActiveRecord::Base.connection.add_limit_offset!("SELECT * FROM #{quoted_table_name} ORDER BY #{id}",
 				:limit => records_per_page, :offset => records_per_page * page
 			)
