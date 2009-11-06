@@ -22,22 +22,22 @@ class MovieTest < ActiveSupport::TestCase
 end
 
 # == Schema Info
-# Schema version: 20090815080340
+# Schema version: 20090816085727
 #
 # Table name: movies
 #
-#  id                  :integer         not null, primary key
+#  id                  :integer(4)      not null, primary key
 #  normalized_rt_title :string(255)
 #  normalized_tz_title :string(255)
 #  rt_img              :string(255)
 #  rt_info             :text
 #  rt_link             :string(255)
-#  rt_rating           :integer         default(0)
+#  rt_rating           :integer(4)      default(0)
 #  rt_title            :string(255)
 #  status              :string(255)
 #  tz_hash             :string(255)
 #  tz_link             :string(255)
 #  tz_title            :string(255)
-#  year                :integer
+#  year                :integer(4)
 #  created_at          :datetime
 #  updated_at          :datetime

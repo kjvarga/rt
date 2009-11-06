@@ -1,3 +1,4 @@
+Sitemap: http://rottentorrentz.com/sitemap_index.xml.gz
 User-Agent: *
 Disallow: /movie/browser.php
 Disallow: /celebrity/

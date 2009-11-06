@@ -75,7 +75,7 @@ ActiveRecord::Schema.define(:version => 20090816085727) do
     t.integer  "peers",            :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "percent"
+    t.integer  "percent",          :default => 0
   end
 
   add_index "tz_movies", ["movie_hash"], :name => "index_tz_movies_on_movie_hash"

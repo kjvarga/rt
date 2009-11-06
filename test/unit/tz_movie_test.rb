@@ -7,23 +7,23 @@ class TzMovieTest < ActiveSupport::TestCase
   end
 end
 
-
 # == Schema Info
-# Schema version: 20090815080340
+# Schema version: 20090816085727
 #
 # Table name: tz_movies
 #
-#  id               :integer         not null, primary key
-#  rt_movie_id      :integer
-#  hash             :string(255)     not null
+#  id               :integer(4)      not null, primary key
+#  rt_movie_id      :integer(4)
 #  last_updated     :string(255)
 #  link             :string(255)
+#  movie_hash       :string(255)     not null
 #  normalized_title :string(255)
-#  peers            :integer         default(0)
-#  seeds            :integer         default(0)
-#  size             :integer         default(0)
+#  peers            :integer(4)      default(0)
+#  percent          :integer(4)      default(0)
+#  seeds            :integer(4)      default(0)
+#  size             :integer(4)      default(0)
 #  status           :string(255)
 #  title            :string(255)
-#  verified         :boolean
+#  verified         :boolean(1)
 #  created_at       :datetime
 #  updated_at       :datetime

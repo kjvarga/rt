@@ -7,20 +7,19 @@ class RtMovieTest < ActiveSupport::TestCase
   end
 end
 
-
 # == Schema Info
-# Schema version: 20090815080340
+# Schema version: 20090816085727
 #
 # Table name: rt_movies
 #
-#  id               :integer         not null, primary key
+#  id               :integer(4)      not null, primary key
 #  genre            :string(255)
 #  img              :string(255)
 #  info             :text
 #  link             :string(255)
 #  normalized_title :string(255)
-#  rating           :integer         default(0)
+#  rating           :integer(4)      default(0)
 #  title            :string(255)
-#  year             :integer
+#  year             :integer(4)
 #  created_at       :datetime
 #  updated_at       :datetime
