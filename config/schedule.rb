@@ -22,11 +22,5 @@
 set :cron_log, "~/sites/rottentorrentz/current/log/cron_log.log"
 
 every 3.days do
-  rake "app:update_sitemap_and_symlink"
+  rake "-s sitemap:refresh"
 end
-
-# Touch some pages every so often to keep the data 
-# fresh and ensure the site is alive
-#every 10.minutes do
-  
-#end

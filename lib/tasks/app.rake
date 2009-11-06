@@ -78,24 +78,6 @@ namespace :app do
   task :update_sass => :environment do
     Sass::Plugin.update_stylesheets
   end
-  
-  desc 'Update the sitemap and symlink it to the public/system folder.
-  
-        Add the following to your cron file to regenerate the sitemap file twice a week:
-          0 0 * * 1,5 nice rake -f ~/sites/rottentorrentz/current/Rakefile app:update_sitemap_and_symlink --trace 2>&1 >> ~/sites/rottentorrentz/current/log/rake.log'
-  task :update_sitemap_and_symlink do
-    
-    environment = ENV['RAILS_ENV'] || 'production'
-    pub = File.join(RAILS_ROOT, 'public')
-    sys = File.join(RAILS_ROOT, 'public', 'system', '')
-    
-    # If generation fails, copy from system back to public
-    if system("nice rake sitemap:refresh -f #{RAILS_ROOT}/Rakefile RAILS_ENV=#{environment} --trace 2>&1 >> #{RAILS_ROOT}/log/rake.log")
-      system("cp -f #{File.join(pub, 'sitemap')}* #{sys}")
-    else
-      system("cp -f #{File.join(sys, 'sitemap')}* #{pub}")
-    end
-  end
 
   desc "Touch the home page and send an email if it doesn't return a 200 status code."
   task :ping => :environment do
