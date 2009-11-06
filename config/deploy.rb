@@ -83,9 +83,7 @@ namespace :deploy do
   task :after_update_code do
     run "chmod 755 #{release_path}/public"
     run "chmod 755 #{release_path}/public/dispatch.*"
-    run "if [ -e #{previous_release}/public/sitemap_index.xml.gz ]; then cp #{previous_release}/public/sitemap* #{current_release}/public/; fi"
-    run "cd #{current_path} && rake app:update_sass RAILS_ENV=production"
-    
+
     # Switch to production environment.
     # This uncomments all lines in environment.rb that start with '#prod'
     environment_file = "#{release_path}/config/environment.rb"
@@ -94,6 +92,10 @@ namespace :deploy do
     # Delete unpacked native gems.  Because we don't have access to the C compiler
     # on HostGator, we cannot build the unpacked gems.  So we must use the system gem.
     delete_local_copy_of_system_gems
+    
+    run "ln -nfs #{shared_path}/db/database.yml #{current_release}/config/database.yml"
+    run "if [ -e #{previous_release}/public/sitemap_index.xml.gz ]; then cp #{previous_release}/public/sitemap* #{current_release}/public/; fi"
+    run "cd #{current_path} && rake app:update_sass RAILS_ENV=#{rails_env}"
   end
   
   desc "After setup ensure the shared/db and shared/backups folders exist."
@@ -107,12 +109,12 @@ namespace :log do
   task :rotate, :roles => [:app] do
     logfiles = capture( "ls -x #{shared_path}/log" ).split
 
-    if logfiles.index( 'production.log' ).nil?
+    if logfiles.index( "#{rails_env}.log" ).nil?
       logger.info "production.log was not found, no rotation performed"
 
     else
-      filename = "production.log.#{timestamp_string}.log.bz2"
-      logfile = "#{shared_path}/log/production.log"
+      filename = "#{rails_env}.log.#{timestamp_string}.log.bz2"
+      logfile = "#{shared_path}/log/#{rails_env}.log"
 
       deploy.restart # stop the server
       run "bzip2 #{logfile}" # bzips the production.log and removes it
