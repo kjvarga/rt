@@ -12,7 +12,7 @@ namespace :tz do
     tzpage.save
     
     # Expire the fragment cache for this URL
-    ActionController::Base::expire_fragment( :url => tzpage.url )
+    ActionController::Base.new.expire_fragment( :url => tzpage.url )
     
     # process the movies
     extractAndLoadMovies(tzpage)
