@@ -62,18 +62,21 @@ task :enable_web,  :roles => [:web] do find_and_execute_task('deploy:web:enable'
 namespace :deploy do
   desc "Restart the web server. Simply kill all FCGI processes."
   task :restart, :roles => :app do
-    run "killall -q dispatch.fcgi"
+    #run "killall -q dispatch.fcgi"
+    deploy.stop
+    deploy.start
   end
 
   desc "Start the web server. Symlink the application and kill all \
         FCGI processes.  Otherwise nothing to do here for shared hosting."
   task :start, :roles => :app do
     create_application_symlink
-    deploy.restart
+    run "mongrel_rails start -C #{current_path}/config/mongrel.yml"
   end
 
   desc "Stop the web server.  Does nothing but override the default."
   task :stop, :roles => :app do
+    run "mongrel_rails stop -C #{current_path}/config/mongrel.yml"
   end
 
   task :after_symlink do
@@ -116,12 +119,13 @@ namespace :log do
       filename = "#{rails_env}.log.#{timestamp_string}.log.bz2"
       logfile = "#{shared_path}/log/#{rails_env}.log"
 
-      deploy.restart # stop the server
+      deploy.stop
       run "bzip2 #{logfile}" # bzips the production.log and removes it
 
       `mkdir -p #{File.dirname(__FILE__)}/../backups/log`
       download "#{logfile}.bz2", "backups/log/#{filename}"
       run "rm -f #{logfile}.bz2"
+      deploy.start
     end
   end
 end

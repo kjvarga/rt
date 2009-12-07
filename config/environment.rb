@@ -10,12 +10,9 @@ RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
-  # KJV: gems with :use_system_gem => true will be deleted from vendor/gems by capistrano
-  config.gem "sqlite3-ruby", :lib => "sqlite3"
-  config.gem "nokogiri", :version => ">=1.3.1", :use_system_gem => true
+  config.gem "nokogiri", :version => ">=1.3.1"
   config.gem "mechanize", :version => ">=0.9.3"
   config.gem "haml", :version => ">=2.0.9"
-  config.gem 'bullet', :source => 'http://gemcutter.org'
   config.gem "whenever", :version => ">=0.3.6", :lib => false
   config.gem 'sitemap_generator', :source => 'http://gemcutter.org'
   

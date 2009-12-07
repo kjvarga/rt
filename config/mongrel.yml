@@ -1,0 +1,19 @@
+---
+:throttle: 0
+:includes:
+:host: 0.0.0.0
+:prefix:
+:debug: false
+:num_processors: 1024
+:port: 3000
+:group:
+:docroot: public
+:user:
+:config_script:
+:timeout: 60
+:daemon: true
+:cwd: /home/kjvarga/sites/rottentorrentz/current
+:mime_map:
+:environment: production
+:pid_file: /home/kjvarga/sites/rottentorrentz/current/tmp/pids/mongrel_rails.3000.pid
+:log_file: log/mongrel.log
