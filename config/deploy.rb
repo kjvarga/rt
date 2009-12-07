@@ -63,8 +63,7 @@ namespace :deploy do
   desc "Restart the web server. Simply kill all FCGI processes."
   task :restart, :roles => :app do
     #run "killall -q dispatch.fcgi"
-    deploy.stop
-    deploy.start
+    run "if [ -e #{shared_path}/pids/mongrel_rails.3000.pid ]; then mongrel_rails restart -P #{shared_path}/pids/mongrel_rails.3000.pid; else mongrel_rails start -C #{current_path}/config/mongrel.yml; fi"
   end
 
   desc "Start the web server. Symlink the application and kill all \
@@ -76,7 +75,7 @@ namespace :deploy do
 
   desc "Stop the web server.  Does nothing but override the default."
   task :stop, :roles => :app do
-    run "mongrel_rails stop -C #{current_path}/config/mongrel.yml"
+    run "mongrel_rails stop -P #{current_path}/tmp/pids/mongrel_rails.3000.pid"
   end
 
   task :after_symlink do
