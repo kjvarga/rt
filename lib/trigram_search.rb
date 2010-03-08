@@ -1,7 +1,7 @@
 #
 # Module containing methods useful for trigram search.
 #
-module Search
+module TrigramSearch
   
   # Conservative normalize a movie title.
   #
@@ -32,5 +32,25 @@ module Search
   def self.trigrams(word, weighted_end=false)
     word = ' ' + word + (weighted_end ? ' ' : '')
     return (0..word.length-3).collect { |idx| word[idx,3] }
-  end  
+  end
+
+  # Return a degree of match between two titles as a percentage.  Based
+  # on the percentage of trigrams from search_title that exist reference_titlein reference_title.
+  #
+  # @param conservative boolean default false.  Conservative matching
+  # removes more superfluous
+  def self.compare_titles(search_title, reference_title)
+    return 0 if search_title.blank?
+    
+    search_trigrams = trigrams(search_title, true)     
+    title_trigrams = trigrams(reference_title, true)     
+
+    # Calculate the percentage of search trigrams matched in the movie title
+    count = 0.0
+    search_trigrams.each do |trigram|
+      count += 1 if title_trigrams.include?(trigram)
+    end
+    
+    percent = search_trigrams.empty? ? 0 : ((count / search_trigrams.length) * 100).to_i
+  end
 end
