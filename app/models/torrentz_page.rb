@@ -131,7 +131,7 @@ class TorrentzPage < ActiveRecord::Base
 end
 
 # == Schema Info
-# Schema version: 20090815080340
+# Schema version: 20100308074028
 #
 # Table name: torrentz_pages
 #

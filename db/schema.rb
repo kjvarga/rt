@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090816085727) do
+ActiveRecord::Schema.define(:version => 20100308074028) do
 
   create_table "movies", :force => true do |t|
     t.string   "tz_link"
@@ -49,6 +49,18 @@ ActiveRecord::Schema.define(:version => 20090816085727) do
   add_index "rt_movies", ["link"], :name => "index_rt_movies_on_link", :unique => true
   add_index "rt_movies", ["rating"], :name => "index_rt_movies_on_rating"
   add_index "rt_movies", ["year"], :name => "index_rt_movies_on_year"
+
+  create_table "slugs", :force => true do |t|
+    t.string   "name"
+    t.integer  "sluggable_id"
+    t.integer  "sequence",                     :default => 1, :null => false
+    t.string   "sluggable_type", :limit => 40
+    t.string   "scope"
+    t.datetime "created_at"
+  end
+
+  add_index "slugs", ["name", "sluggable_type", "sequence", "scope"], :name => "index_slugs_on_n_s_s_and_s", :unique => true
+  add_index "slugs", ["sluggable_id"], :name => "index_slugs_on_sluggable_id"
 
   create_table "torrentz_pages", :force => true do |t|
     t.text     "html"

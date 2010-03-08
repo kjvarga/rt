@@ -7,18 +7,18 @@
 #   column: value
 
 # == Schema Info
-# Schema version: 20090816085727
+# Schema version: 20100308074028
 #
 # Table name: rt_movies
 #
-#  id               :integer(4)      not null, primary key
+#  id               :integer         not null, primary key
 #  genre            :string(255)
 #  img              :string(255)
 #  info             :text
 #  link             :string(255)
 #  normalized_title :string(255)
-#  rating           :integer(4)      default(0)
+#  rating           :integer         default(0)
 #  title            :string(255)
-#  year             :integer(4)
+#  year             :integer
 #  created_at       :datetime
 #  updated_at       :datetime

@@ -1,13 +1,15 @@
 class RtMovie < ActiveRecord::Base
-  GENRES = ['Action/Adventure', 'Animation', 'Comedies', 'Documentaries', 'Dramas', 'Foreign', 'Horror/Suspense', 'Kids/Family', 'Romance', 'Sci-Fi/Fantasy', 'Special Interest', 'Thriller']
+  has_friendly_id :title
   
   has_many :tz_movies
   validates_uniqueness_of :link
+  
+  GENRES = ['Action/Adventure', 'Animation', 'Comedies', 'Documentaries', 'Dramas', 'Foreign', 'Horror/Suspense', 'Kids/Family', 'Romance', 'Sci-Fi/Fantasy', 'Special Interest', 'Thriller']
+  
 end
 
-
 # == Schema Info
-# Schema version: 20090815080340
+# Schema version: 20100308074028
 #
 # Table name: rt_movies
 #
