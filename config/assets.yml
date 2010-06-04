@@ -1,0 +1,18 @@
+package_assets:         on          # (on, off, always)
+embed_assets:           on          # (on, off, datauri)
+compress_assets:        on          # (on, off)
+gzip_assets:            on          # (on, off)
+javascript_compressor:  yui         # (yui, closure)
+compressor_options:
+  compilation_level: ADVANCED_OPTIMIZATIONS
+ 
+javascripts:
+  common:
+    - public/javascripts/application.js
+    - public/javascripts/jquery.event.hover-1.0.js
+ 
+stylesheets:
+  common:
+    - public/stylesheets/application.css
+    - public/javascripts/style_.css    
+    - public/javascripts/all.css    

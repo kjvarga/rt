@@ -5,14 +5,7 @@ require 'nokogiri'
 
 class Movie < ActiveRecord::Base      
   
-  ROTTEN_TOMATOES_SEARCH_URL = 'http://rottentomatoes.com/search/full_search.php?search='
-  ROTTEN_TOMATOES_URL = 'http://www.rottentomatoes.com'
-  EXTRACT_BODY_REGEX = /<body[^>]*>(.*?)<\/body>/mi
-  EXTRACT_SCRIPT_REGEX = /(<script[^>]*>.*?<\/script>)/mi
-  EXTRACT_MOVIE_INFO_REGEX = lambda { |inner_divs| 
-    Regexp.new('(<div id="movie_info_box"[^>]*>(.*?</div>){'+inner_divs.to_s+'})', 
-        Regexp::IGNORECASE|Regexp::MULTILINE) 
-  }
+
 
 
     

@@ -1,0 +1,34 @@
+@import '_variables'
+
+=font(!family, !size, !weight=normal, !color=inherit)
+  :color = !color
+  :font
+    :family = !family
+    :size = !size
+    :weight = !weight
+
+// Add styles to an element to show the image in <tt>image<tt> at the 
+// given <tt>x_pos</tt> and <tt>y_pos</tt>. If the optional <tt>x_size</tt> or 
+// <tt>y_size</tt> arguments are passed in, the width and/or height 
+// is set to that value.    
+=sprite(!image, !x_pos, !y_pos, !x_size=0, !y_size=0)
+  :background-image = url(!image)
+  :background-position = !x_pos !y_pos
+  @if !x_size > 0
+    :width = !x_size
+  @if !y_size > 0
+    :height = !y_size
+
+=rounded_box(!image, !x_pos, !y_pos, !radius) 
+  :position relative
+  +corner(!radius, top, left, !x_pos, !y_pos, !image)
+  +corner(!radius, top, right, !x_pos-!radius, !y_pos, !image)
+  +corner(!radius, bottom, left, !x_pos, !y_pos-!radius, !image)
+  +corner(!radius, bottom, right, !x_pos-!radius, !y_pos-!radius, !image)
+
+=corner(!radius, !x_abs, !y_abs, !x_pos, !y_pos, !image)
+  .#{!x_abs}-#{!y_abs}
+    +sprite(!image, !x_pos, !y_pos, !radius, !radius)
+    :position absolute
+    :#{!x_abs} 0
+    :#{!y_abs} 0

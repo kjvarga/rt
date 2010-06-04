@@ -10,14 +10,24 @@ RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
-  config.gem "nokogiri", :version => ">=1.3.1"
-  config.gem "mechanize", :version => ">=0.9.3"
   config.gem "haml", :version => ">=2.0.9"
-  config.gem "whenever", :version => ">=0.3.6", :lib => false
+  config.gem 'compass'
+  config.gem "jammit"
+    
+  config.gem "will_paginate"
   config.gem 'sitemap_generator'
   config.gem "friendly_id", :version => ">= 2.3.0"
+
+  # notifications
   config.gem 'hoptoad_notifier'
+
+  # screen scraping
+  config.gem "nokogiri", :version => ">=1.3.1"
+  config.gem "mechanize", :version => ">=0.9.3"  
   
+  # cron tasks
+  config.gem 'whenever', :lib => false
+    
   config.time_zone = 'Vancouver'
 
   config.action_mailer.register_template_extension('haml')
