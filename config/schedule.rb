@@ -21,20 +21,20 @@
 
 set :cron_log, "~/sites/rottentorrentz/current/log/cron_log.log"
 
-every 3.days do
-  rake "-s sitemap:refresh"
-end
-
-# Touch some pages every so often to keep the data 
-# fresh and ensure the site is alive
-every 2.hours do
-  rake "app:ping"
-end
-
-every 1.day do
-  command "mongrel_rails restart -P /home/kjvarga/sites/rottentorrentz/current/tmp/pids/mongrel_rails.3000.pid"
-end
-
-every :reboot do
-  command 'mongrel_rails start -C /home/kjvarga/sites/rottentorrentz/current/config/mongrel.yml'
-end
+# every 3.days do
+#   rake "-s sitemap:refresh"
+# end
+# 
+# # Touch some pages every so often to keep the data 
+# # fresh and ensure the site is alive
+# every 2.hours do
+#   rake "app:ping"
+# end
+# 
+# every 1.day do
+#   command "mongrel_rails restart -P /home/kjvarga/sites/rottentorrentz/current/tmp/pids/mongrel_rails.3000.pid"
+# end
+# 
+# every :reboot do
+#   command 'mongrel_rails start -C /home/kjvarga/sites/rottentorrentz/current/config/mongrel.yml'
+# end
