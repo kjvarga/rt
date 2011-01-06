@@ -55,6 +55,9 @@ before "deploy",             :disable_web
 after  "deploy:cold",        :create_application_symlink
 after  "deploy:setup",       :create_application_symlink
 after  "deploy",             :enable_web
+after  "symlink",            :update_crontab
+after  'update_code',        :configure_site
+after  'setup',              :create_shared_folders
 
 task :disable_web, :roles => [:web] do find_and_execute_task('deploy:web:disable'); end
 task :enable_web,  :roles => [:web] do find_and_execute_task('deploy:web:enable');  end
@@ -78,11 +81,11 @@ namespace :deploy do
     run "mongrel_rails stop -P #{current_path}/tmp/pids/mongrel_rails.3000.pid"
   end
 
-  task :after_symlink do
+  task :update_crontab do
     run "cd #{current_path} && export GEM_PATH=#{gem_path} && #{gem_path}/bin/whenever --update-crontab #{application}"
   end
-  
-  task :after_update_code do
+
+  task :configure_site do
     run "chmod 755 #{release_path}/public"
     run "chmod 755 #{release_path}/public/dispatch.*"
 
@@ -90,22 +93,22 @@ namespace :deploy do
     # This uncomments all lines in environment.rb that start with '#prod'
     environment_file = "#{release_path}/config/environment.rb"
     run "sed 's/^#prod//g' #{environment_file} > #{environment_file}.tmp && mv #{environment_file}.tmp #{environment_file}"
-  
+
     # Delete unpacked native gems.  Because we don't have access to the C compiler
     # on HostGator, we cannot build the unpacked gems.  So we must use the system gem.
     delete_local_copy_of_system_gems
-    
+
     run "ln -nfs #{shared_path}/db/database.yml #{current_release}/config/database.yml"
     run "if [ -e #{previous_release}/public/sitemap_index.xml.gz ]; then cp #{previous_release}/public/sitemap* #{current_release}/public/; fi"
     run "cd #{current_path} && rake app:update_sass RAILS_ENV=#{rails_env}"
   end
-  
+
   desc "After setup ensure the shared/db and shared/backups folders exist."
-  task :after_setup, :roles => [:app, :db, :web] do
+  task :create_shared_folders, :roles => [:app, :db, :web] do
     run "umask 02 && mkdir -p #{shared_path}/db && mkdir -p #{shared_path}/backups"
   end
 end
-  
+
 namespace :log do
   desc "Compress and copy log file to local machine"
   task :rotate, :roles => [:app] do
@@ -140,7 +143,7 @@ task :invoke do
 end
 
 # @see http://blog.pretheory.com/arch/2008/02/capistrano_path_and_environmen.php
-desc "Echo environment variables as seen by the Capistrano user" 
+desc "Echo environment variables as seen by the Capistrano user"
 namespace :env do
   task :echo do
     run "echo printing out cap info on remote server"
